@@ -44,15 +44,15 @@ def main():
     my_admin = User_type("admin", admin_rights)
 
     # System Users    
-    # users = {
-    #             "user"  : User("u", "u1@g.com", "1", my_user),  #user
-    #             "admin" : User("a","u2@g.com","1", my_admin)    #admin
-    #         }
-    
     users = {
-                "user"  : "u",  #user
-                "admin" : "a"    #admin
+                "u"  : User("u", "u1@g.com", "1", my_user),  #user
+                "a" : User("a","u2@g.com","1", my_admin)    #admin
             }
+    
+    # users = {
+    #             "user"  : "u",  #user
+    #             "admin" : "a"    #admin
+    #         }
     
     # database = UserDatabase()
     # admin_logged_in = False
@@ -72,16 +72,26 @@ def main():
             choice = input("Enter your choice: ")
     
             if choice == '1':
-                username = input("Enter username: ")
-                # Assuming admin password validation here
-                value = users.get(username)
-                print(value)
+                for retry in range(5):
+                    username = input("Enter username: ")
 
-                if username not in users:
-                     print("Invalid username. Please try again.")
+                    if username not in users:
+                        print("Invalid username. Please try again.")
+                        retry += 1
+                    else:
+                        print("Welcome back, ", username,"!")
+                        logged_in=True
                 else:
-                    print("Welcome back, ", username,"!")
-                    logged_in=True
+                    print("you keep making invalid choices, exiting.")
+                    logged_in = False
+                # username = input("Enter username: ")
+                # # Assuming admin password validation here
+                # value = users.get(username)
+                # print(value)
+
+                # if username not in users:
+                #      print("Invalid username. Please try again.")
+
                 
                 
             #     if username in users:
