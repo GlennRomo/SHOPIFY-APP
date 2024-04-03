@@ -149,13 +149,35 @@ def main():
                     print("\nView Product List Option Coming Soon!")                   
                     display_products(products)
                 elif admin_choice == '2':
-                    print("\nAdd New Product Option Coming Soon!")
                     
-                    ## Request info for new products based on needs below:
-                    newprod_id    = input("\nEnter the product name: ") #This option should be the next iteration in the list, IDs are autodetermined
-                    newprod_name  = input("\nEnter the product name: ")
-                    newprod_cat   = input("\nEnter the product category name: ") # This option must choose from existing list
-                    newprod_price = input("\nEnter the product price: ")
+                    user_choice = 'y'
+                    
+                    while True: 
+                        
+                        if user_choice == 'n':
+                            
+                            print("\nExiting new product addition...")
+                            break
+                        
+                        elif user_choice == 'y':
+                            
+                            print("\nLet's add a new product:")
+                            
+                            ## Request info for new products based on needs below:
+                            newprod_id    = input("\nEnter the product id: ") #This option should be the next iteration in the list, IDs are autodetermined
+                            newprod_name  = input("\nEnter the product name: ")
+                            newprod_cat   = input("\nEnter the product category name: ") # This option must choose from existing list
+                            newprod_price = input("\nEnter the product price: ")
+                            
+                            products.update({newprod_name: Product(newprod_name, newprod_id, newprod_cat, newprod_price)})
+                            
+                            print("\nNew product added!")
+                           
+                        else:
+                            print("Invalid choice. Please try again.")
+                            
+                        print("\nWould you like to add another product? y/n")
+                        user_choice  = input("\nEnter your choice: ")
                     
                 elif admin_choice == '3':
                     print("\nModify Existing Product Option Coming Soon!")
