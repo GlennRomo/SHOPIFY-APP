@@ -6,7 +6,7 @@ Shopify App - Foundations: Programming Refresher Assignment
 class User_type:
     def __init__(self, type_name, user_rights):
         self.type_name = type_name
-        self.user_rights = ()
+        self.user_rights = user_rights
         
     def display_rights(self, username):
         print("\nList of User Rights: ", self.user_rights)
@@ -21,10 +21,10 @@ class User:
         
     def display_current_user(self):
         print("\nThe current user is: ",    self.username)
-        #print("The current email is: ",     self.email)
-        #print("The current password is: ",  self.password)
-        #print("The current user type is: ", self.user_type)
-        
+        print("The current email is: ",     self.email)
+        print("The current password is: ",  self.password)
+        print("The current user type is: ", self.user_type.type_name)
+        print("The current user type rights are: ", self.user_type.user_rights)
         
 class Product:
     def __init__(self, product_id, product_name, category_id, price):
@@ -92,8 +92,8 @@ def main():
                         print("Invalid username. Please try again.")
                         retry += 1
                     else:
-                        print("Welcome back, ",username,"!")
-                        current_user = users['u']
+                        print("\nWelcome back, ",username,"!")
+                        current_user = users[username]
                         current_type = 'admin'  ## 1) I would like to set the current user type here based on user or admin. 2) I would like to add an option for the admin to choose between admin or user view
                         logged_in = True
                         break
@@ -111,12 +111,12 @@ def main():
         else:   #This else statement enters after a user logs in
         
             # This section of code is to understand how to get the current user type for option permissions
-            User.display_current_user(current_user)
             #print(u_type)
             #User_type.display_rights(current_user)
             
-            # Begin options once Admin login is achieved
-            if current_type == 'user':
+            # Option menu appears based on user type of current login
+
+            if current_user.user_type.type_name == 'user':
                 
                 print("\nUser Options:")
                 print("1. View Cart Contents\n2. Add Items to Your Cart\n3. Remove Items from Your Cart\n4. View Product List\n5. View Product Category List\n6. Filter and View Product List by Category\n7. Checkout")
@@ -138,7 +138,7 @@ def main():
                     print("\nCheckout Option Coming Soon!")
             
             # Begin options once Admin login is achieved
-            elif current_type == 'admin':
+            elif current_user.user_type.type_name == 'admin':
                             
                 print("\nAdmin Options:")
                 print("1.  View Product List\n2.  Add New Product\n3.  Modify Existing Product\n4.  Delete Existing Product\n5.  View Product Category List\n6.  Add New Product Category\n7.  Modify Existing Product Category\n8.  Delete Existing Product Category\n9.  View User List\n10. Add New User\n11. Modify Existing User\n12. Delete Existing User\n13. Logout")
@@ -206,7 +206,8 @@ def main():
                     print("Invalid choice. Please try again.")
                     
             else:
-                print("Error: Seesion user type should always have an assignment!")
+                print("Error: Session user type should always have an assignment!")
+                break
 
     print("\nThank You for Visiting the Demo Marketplace")
 
