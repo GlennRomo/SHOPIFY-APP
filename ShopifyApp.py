@@ -4,12 +4,12 @@ Shopify App - Foundations: Programming Refresher Assignment
 """
 
 class User_type:
-    def __init__(self, type_name, user_rights):
+    def __init__(self, type_name, rights):
         self.type_name = type_name
-        self.user_rights = user_rights
+        self.rights = rights
         
     def display_rights(self, username):
-        print("\nList of User Rights: ", self.user_rights)
+        print("\nList of User Rights: ", self.rights)
         
 
 class User:
@@ -19,20 +19,69 @@ class User:
         self.password = password
         self.user_type = user_type
         
+        
     def display_current_user(self):
         print("\nThe current user is: ",    self.username)
         print("The current email is: ",     self.email)
         print("The current password is: ",  self.password)
         print("The current user type is: ", self.user_type.type_name)
-        print("The current user type rights are: ", self.user_type.user_rights)
+        print("The current user type rights are: ", self.user_type.rights)
         
+      
+class Category:
+    def __init__(self, category_id):
+        self.category_id = category_id
+    
 class Product:
     def __init__(self, product_id, product_name, category_id, price):
         self.product_id = product_id
         self.product_name = product_name
         self.cateogry_id = category_id
         self.price = price
-     
+        
+        
+class Catalogue:
+    product_list = {}
+    
+    def add_product(self, current_user, product_id, product_name, category_id, price):
+
+        if 'Add New Product' in current_user.user_type.rights:
+            #Logic to add product
+            
+            if product_id not in self.product_list:
+                self.product_list[product_id] = Product(product_id, product_name, category_id, price)                    
+            else:
+                print("\nERROR: The product already exists")
+        else:
+            print("\nERROR: Current user has no permissions to add products")
+            
+                
+    def remove_product(self, current_user, product_id):
+        print("\nDelete Existing Product Option Coming Soon!")
+            
+    def modifiy_product(self, current_user, product_id, product_name, category_id, price):
+        if 'Modify Products' in current_user.user_type.rights:
+            #Logic to modify product
+            if product_id not in self.product_list:
+                print("\nERROR: The product does not exist")
+            else:
+                self.product_list[product_id] = Product(product_id, product_name, category_id, price)
+                print("\nProduct Modified!")
+                print(self.product_list[product_id])
+        else:
+            print("\nERROR: current user has no permissions to add products")
+            
+    def display_product(self, current_user):
+        if 'View Products' in current_user.user_type.rights:
+            #Logic to display product
+            
+            print("Product ID\tProduct Name\tCategory ID\tPrice")
+
+            for value in self.product_list:
+                print(value,"\t",self.product_list[value])
+
+        else:
+            print("\nERROR: current user has no permissions to add products")
         
 def display_users(users):
     print("\nList of Users:")
@@ -47,31 +96,30 @@ def display_products(products):
 
 def main():
     
-    logged_in = False
-    
     #user rights
-    user_rights  = ("view cart contents", "add items to cart", "remove items from cart", )
-    admin_rights = ("add new product", "modify product", "delete produt", "add category", "modify category", "delete category", "create user", "display users", "delete user")
-    
+    user_rights  = ["view cart contents", "add items to cart", "remove items from cart"]
+    admin_rights = ["Add New Product", "View Products", "Modify Products", "delete produt", "add category", "modify category", "delete category", "create user", "display users", "delete user"]
     
     # User_types
     my_user  = User_type("user", user_rights) 
     my_admin = User_type("admin", admin_rights)
     
-
-    # System Users    
+    # Add System Users    
     users = {
                 "u"  : User("u", "u1@g.com", "1", my_user),  #user
                 "a" : User("a","u2@g.com","1", my_admin)    #admin
             }
     
-    # System Products    
-    products = {
-                "Boots"   : Product("1", "Shoes", "1", 120),
-                "Coats"   : Product("2", "Clothes", "2", 99),
-                "Jackets" : Product("3", "Clothes", "2", 150),
-                "Caps"    : Product("4", "Hats", "2", 50),
-               }
+    
+    # Add System Products    
+    my_catalog = Catalogue()
+
+    my_catalog.add_product(users['a'],"1", "Boots", "Shoes", 120)
+    my_catalog.add_product(users['a'], "2", "Coats", "Clothes", 99)
+    my_catalog.add_product(users['a'], "3", "Jackets", "Clothes", 150)
+    my_catalog.add_product(users['a'], "4", "Caps", "Hats", 50)
+    
+    logged_in = False
     
     print("\n\nWelcome to the Demo Marketplace")
 
@@ -80,7 +128,8 @@ def main():
         if not logged_in:
             
             # If not already logged in, the system will request the user to login or exit
-            print("\n1. User Login\n2. Exit")
+            
+            print("\nMain Menu:\n1. User Login\n2. Exit")
             choice = input("\nEnter your choice: ")
     
             if choice == '1':
@@ -145,9 +194,8 @@ def main():
                 admin_choice = input("\nEnter your choice: ")
         
                 ## Improvement is to make a case statement?
-                if   admin_choice == '1':     ## Add New Product Option
-                    print("\nView Product List Option Coming Soon!")                   
-                    display_products(products)
+                if   admin_choice == '1':     ## Add New Product Option                 
+                    my_catalog.display_product(current_user)
                 elif admin_choice == '2':
                     
                     user_choice = 'y'
@@ -164,12 +212,12 @@ def main():
                             print("\nLet's add a new product:")
                             
                             ## Request info for new products based on needs below:
-                            newprod_id    = input("\nEnter the product id: ") #This option should be the next iteration in the list, IDs are autodetermined
-                            newprod_name  = input("\nEnter the product name: ")
-                            newprod_cat   = input("\nEnter the product category name: ") # This option must choose from existing list
-                            newprod_price = input("\nEnter the product price: ")
+                            # newprod_id    = input("\nEnter the product id: ") #This option should be the next iteration in the list, IDs are autodetermined
+                            # newprod_name  = input("\nEnter the product name: ")
+                            # newprod_cat   = input("\nEnter the product category name: ") # This option must choose from existing list
+                            # newprod_price = input("\nEnter the product price: ")
                             
-                            products.update({newprod_name: Product(newprod_name, newprod_id, newprod_cat, newprod_price)})
+                            # products.update({newprod_name: Product(newprod_name, newprod_id, newprod_cat, newprod_price)})
                             
                             print("\nNew product added!")
                            
