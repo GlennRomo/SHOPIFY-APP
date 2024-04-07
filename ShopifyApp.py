@@ -46,7 +46,6 @@ class Catalog:
     product_list = {}
     
     def add_product(self, current_user, product_id, product_name, category_id, price):
-
         if 'Add New Product' in current_user.user_type.rights:
             #Logic to add product
             
@@ -59,11 +58,11 @@ class Catalog:
             
             
     def is_id_available(self, current_user, product_id):
-        if 'Add New Product' in current_user.user_type.rights:
+        if 'View Products' in current_user.user_type.rights:
             #Logic to check if a product already exists in the catalog
-            return product_id not in self.product_list    
+            return product_id in self.product_list 
         else:
-            print("\nERROR: Current user has no permissions to add products")
+            print("\nERROR: Current user has no permissions to view products")
             
                 
     def remove_product(self, current_user, product_id):
@@ -94,7 +93,45 @@ class Catalog:
 
         else:
             print("\nERROR: current user has no permissions to add products")
+
+
+class Cart_product:
+    def __init__(self, product_id, quantity):
+        self.product_id = product_id
+        self.quantity = quantity
         
+    def cart_product_total_price(self):
+        print("temp")
+
+class Cart:
+    cart_list = {}
+    
+    def add_cartproduct(self, current_user, product_id, quantity, my_catalog):
+        if 'Add Cart Product' in current_user.user_type.rights:
+            #Logic to add product
+            
+            if product_id not in my_catalog.product_list:
+                print("\nThis product does not exists. Please identify an existing product.")
+            else:
+                self.cart_list[product_id] = Cart_product(product_id, quantity)                    
+        else:
+            print("\nERROR: Current user has no permissions to add products")
+        
+    def display_cart(self,current_user, my_cart, my_catalog):
+        if 'View Cart' in current_user.user_type.rights:
+            if not my_cart.cart_list:
+                print("\nCart is empty.")
+            else:                
+                print("\nProduct Name\tCategory ID\tPrice\tQuantity\n")
+
+                for product_id, value in my_cart.cart_list.items():
+                    print(f"{my_catalog.product_list[product_id].product_name}\t\t\t{my_catalog.product_list[product_id].category_id}\t\t{my_catalog.product_list[product_id].price}\t\t{my_cart.cart_list[product_id].quantity}")
+        else:
+            print("\nERROR: current user has no permissions to add products")
+            
+    def cart_total_price(self):
+        print("temp")
+    
         
 def display_users(users):
     print("\nList of Users:")
@@ -111,8 +148,8 @@ def display_products(products):
 def main():
     
     #user rights
-    user_rights  = ["View Products", "view cart contents", "add items to cart", "remove items from cart"]
-    admin_rights = ["Add New Product", "View Products", "Modify Products", "delete produt", "add category", "modify category", "delete category", "create user", "display users", "delete user"]
+    user_rights  = ["View Products", "View Cart", "Add Cart Product", "Remove Cart Product"]
+    admin_rights = ["Add New Product", "View Products", "Modify Products", "Delete Product", "Add Category", "Modify Category", "Delete Category", "Create User", "Display Users", "Delete User"]
     
     # User_types
     my_user  = User_type("user", user_rights) 
@@ -132,6 +169,9 @@ def main():
     my_catalog.add_product(users['a'], "2", "Coats", "Clothes", 99)
     my_catalog.add_product(users['a'], "3", "Jackets", "Clothes", 150)
     my_catalog.add_product(users['a'], "4", "Caps", "Hats", 50)
+    
+    # Add System Cart
+    my_cart = Cart()
     
     logged_in = False
     
@@ -181,23 +221,76 @@ def main():
             if current_user.user_type.type_name == 'user':
                 
                 print("\nUser Options:")
-                print("1. View Cart Contents\n2. Add Items to Your Cart\n3. Remove Items from Your Cart\n4. View Product List\n5. View Product Category List\n6. Filter and View Product List by Category\n7. Checkout")
+                print("1. View Cart Contents\n2. Add Items to Your Cart\n3. Remove Items from Your Cart\n4. View Product List\n5. View Product Category List\n6. Filter and View Product List by Category\n7. Checkout\n8. Logout")
                 user_choice = input("\nEnter your choice: ")
             
-                if user_choice == '1':     ## 
-                    print("\nView Cart Contents Option Coming Soon!")
-                elif user_choice == '2':
-                    print("\nAdd Items to Your Cart Option Coming Soon!")
+                if user_choice == '1':       ## Display cart items 
+                    # print("\nView Cart Contents Option Coming Soon!")
+                    my_cart.display_cart(current_user, my_cart, my_catalog)
+                elif user_choice == '2':    ## Add Items to Your Cart Option Coming Soon!")
+                    
+                    user_choice = 'y'
+                    
+                    while True: 
+                        
+                        if user_choice == 'n':
+                            print("\nExiting addition to cart...")
+                            break
+                            
+                        elif user_choice == 'y':
+                            
+                            print("\nLet's add some products to your cart:")
+                            
+                            while True:
+                                
+                                if user_choice =='n':
+                                    break
+                                
+                                product_id = input("\nEnter the product ID of the item you would like to add to your cart: ")
+                                
+                                if product_id == 'x':
+                                    break
+                                
+                                if my_catalog.is_id_available(current_user, product_id):
+                                    quantity = input("\nHow many would you like to add to your cart: ")
+                                    my_cart.add_cartproduct(current_user, product_id, quantity, my_catalog)
+                                    
+                                    print("\nWould you like to add another product to the cart? y/n")
+                                    user_choice  = input("\nEnter your choice: ")
+                                else:
+                                    print("\nThat product ID does not exist in the catalog. Please enter a valid product ID. Enter x to exit.")
+                                
+                        elif user_choice == 'x':
+                            print("\nExiting addition to cart...")
+                            break
+                        else:
+                            print("Invalid choice. Please try again.")
+                        
+                        if product_id == 'x':
+                            print("\nExiting addition to cart...")
+                            break
+                        elif product_id == 'n':
+                            print("\nExiting addition to cart...")
+                            break
+                        
+
+                        
                 elif user_choice == '3':
                     print("\nRemove Items from Your Cart Option Coming Soon!")
                 elif user_choice == '4':
-                    print("\nView Product List Option Coming Soon!")
+                    # print("\nView Product List Option Coming Soon!")
+                    my_catalog.display_product(current_user, my_catalog)
                 elif user_choice == '5':
                     print("\nView Product Category List Option Coming Soon!")
                 elif user_choice == '6':
                     print("\nFilter and View Product List by Category Option Coming Soon!")
                 elif user_choice == '7':
                     print("\nCheckout Option Coming Soon!")
+                elif user_choice == '8':
+                    print("logged out.")
+                    logged_in = False
+                else:
+                    print("Invalid choice. Please try again.")
             
             # Begin options once Admin login is achieved
             elif current_user.user_type.type_name == 'admin':
@@ -207,9 +300,10 @@ def main():
                 admin_choice = input("\nEnter your choice: ")
         
                 ## Improvement is to make a case statement?
-                if   admin_choice == '1':     ## Add New Product Option                 
+                if   admin_choice == '1':     ## Display Product List Option                 
                     my_catalog.display_product(current_user, my_catalog)
-                elif admin_choice == '2':
+                    
+                elif admin_choice == '2':     ## Add New Product Option 
                     
                     user_choice = 'y'
                     
@@ -230,7 +324,8 @@ def main():
                                 product_id    = input("\nEnter the product id: ") #This option should be the next iteration in the list, IDs are autodetermined
                                 
                                 if my_catalog.is_id_available(current_user, product_id):
-                                    
+                                    print("A product with this ID already exists. Please enter a different ID.") 
+                                else:                          
                                     product_name  = input("\nEnter the product name: ")
                                     category_id   = input("Enter the product category name: ") # This option must choose from existing list
                                     price = input("Enter the product price: ")
@@ -239,8 +334,8 @@ def main():
                             
                                     print("\nNew product added!")
                                     break
-                                else:
-                                    print("A product with this ID already exists. Please enter a different ID.")                           
+                        elif user_choice == 'x':
+                            break
                         else:
                             print("Invalid choice. Please try again.")
                             
@@ -291,7 +386,10 @@ Function to add
     - Update usernames to include password verification
     - Modularize for more efficient code
     - Category_ID in adding product must choose from existing list
-    -Change the 'list' currently defined for user permissions to a set (that is not a truple) 
+    - Change the 'list' currently defined for user permissions to a set (that is not a truple)
+    - Define a new class for switch statements that includes methods for user and admin option menus
+    - When a user logs out, it clears the cart
+    - Eliminate redundancy logic to check if product ID exists in main() and user 'Add Cart Product' / admin 'Add product' options
     
 Useful Functions:
     rando = input('input something!: ')     #breaks the code for troubleshooting
