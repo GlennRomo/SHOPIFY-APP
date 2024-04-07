@@ -8,6 +8,7 @@ class User_type:
         self.type_name = type_name
         self.rights = rights
         
+        
     def display_rights(self, username):
         print("\nList of User Rights: ", self.rights)
         
@@ -32,6 +33,7 @@ class Category:
     def __init__(self, category_id):
         self.category_id = category_id
     
+    
 class Product:
     def __init__(self, product_id, product_name, category_id, price):
         self.product_id = product_id
@@ -55,10 +57,19 @@ class Catalog:
         else:
             print("\nERROR: Current user has no permissions to add products")
             
+            
+    def is_id_available(self, current_user, product_id):
+        if 'Add New Product' in current_user.user_type.rights:
+            #Logic to check if a product already exists in the catalog
+            return product_id not in self.product_list    
+        else:
+            print("\nERROR: Current user has no permissions to add products")
+            
                 
     def remove_product(self, current_user, product_id):
         print("\nDelete Existing Product Option Coming Soon!")
             
+        
     def modifiy_product(self, current_user, product_id, product_name, category_id, price):
         if 'Modify Products' in current_user.user_type.rights:
             #Logic to modify product
@@ -70,6 +81,7 @@ class Catalog:
                 print(self.product_list[product_id])
         else:
             print("\nERROR: current user has no permissions to add products")
+            
             
     def display_product(self, current_user, my_catalog):
         if 'View Products' in current_user.user_type.rights:
@@ -83,10 +95,12 @@ class Catalog:
         else:
             print("\nERROR: current user has no permissions to add products")
         
+        
 def display_users(users):
     print("\nList of Users:")
     for user in users:
         print(user)
+        
         
 def display_products(products):
     print("\nList of Products:")
@@ -97,7 +111,7 @@ def display_products(products):
 def main():
     
     #user rights
-    user_rights  = ["view cart contents", "add items to cart", "remove items from cart"]
+    user_rights  = ["View Products", "view cart contents", "add items to cart", "remove items from cart"]
     admin_rights = ["Add New Product", "View Products", "Modify Products", "delete produt", "add category", "modify category", "delete category", "create user", "display users", "delete user"]
     
     # User_types
@@ -143,7 +157,6 @@ def main():
                     else:
                         print("\nWelcome back, ",username,"!")
                         current_user = users[username]
-                        current_type = 'admin'  ## 1) I would like to set the current user type here based on user or admin. 2) I would like to add an option for the admin to choose between admin or user view
                         logged_in = True
                         break
                 else:
@@ -211,16 +224,23 @@ def main():
                             
                             print("\nLet's add a new product:")
                             
-                            ## Request info for new products based on needs below:
-                            # newprod_id    = input("\nEnter the product id: ") #This option should be the next iteration in the list, IDs are autodetermined
-                            # newprod_name  = input("\nEnter the product name: ")
-                            # newprod_cat   = input("\nEnter the product category name: ") # This option must choose from existing list
-                            # newprod_price = input("\nEnter the product price: ")
+                            while True:
+                                
+                                ## Request info for new products based on needs below:
+                                product_id    = input("\nEnter the product id: ") #This option should be the next iteration in the list, IDs are autodetermined
+                                
+                                if my_catalog.is_id_available(current_user, product_id):
+                                    
+                                    product_name  = input("\nEnter the product name: ")
+                                    category_id   = input("Enter the product category name: ") # This option must choose from existing list
+                                    price = input("Enter the product price: ")
                             
-                            # products.update({newprod_name: Product(newprod_name, newprod_id, newprod_cat, newprod_price)})
+                                    my_catalog.add_product(current_user, product_id, product_name, category_id, price)
                             
-                            print("\nNew product added!")
-                           
+                                    print("\nNew product added!")
+                                    break
+                                else:
+                                    print("A product with this ID already exists. Please enter a different ID.")                           
                         else:
                             print("Invalid choice. Please try again.")
                             
@@ -266,10 +286,12 @@ if __name__ == "__main__":
     
 """
 Function to add
-    1) Data validation for names, email addresses, etc.
-    2) Need to add rights based on user type
-    3) Update usernames to include password verification
-    4) Modularize for more efficient code
+    - Data validation for names, email addresses, etc.
+    - Need to add rights based on user type
+    - Update usernames to include password verification
+    - Modularize for more efficient code
+    - Category_ID in adding product must choose from existing list
+    -Change the 'list' currently defined for user permissions to a set (that is not a truple) 
     
 Useful Functions:
     rando = input('input something!: ')     #breaks the code for troubleshooting
