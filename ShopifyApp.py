@@ -36,11 +36,11 @@ class Product:
     def __init__(self, product_id, product_name, category_id, price):
         self.product_id = product_id
         self.product_name = product_name
-        self.cateogry_id = category_id
+        self.category_id = category_id
         self.price = price
         
         
-class Catalogue:
+class Catalog:
     product_list = {}
     
     def add_product(self, current_user, product_id, product_name, category_id, price):
@@ -71,14 +71,14 @@ class Catalogue:
         else:
             print("\nERROR: current user has no permissions to add products")
             
-    def display_product(self, current_user):
+    def display_product(self, current_user, my_catalog):
         if 'View Products' in current_user.user_type.rights:
             #Logic to display product
             
-            print("Product ID\tProduct Name\tCategory ID\tPrice")
+            print("\nProduct ID\tProduct Name\tCategory ID\tPrice\n")
 
-            for value in self.product_list:
-                print(value,"\t",self.product_list[value])
+            for product_id, value in my_catalog.product_list.items():
+                print(f"{product_id}\t\t\t{value.product_name}\t\t\t{value.category_id}\t\t{value.price}")
 
         else:
             print("\nERROR: current user has no permissions to add products")
@@ -107,12 +107,12 @@ def main():
     # Add System Users    
     users = {
                 "u"  : User("u", "u1@g.com", "1", my_user),  #user
-                "a" : User("a","u2@g.com","1", my_admin)    #admin
+                "a"  : User("a","u2@g.com","1", my_admin)    #admin
             }
     
     
     # Add System Products    
-    my_catalog = Catalogue()
+    my_catalog = Catalog()
 
     my_catalog.add_product(users['a'],"1", "Boots", "Shoes", 120)
     my_catalog.add_product(users['a'], "2", "Coats", "Clothes", 99)
@@ -195,7 +195,7 @@ def main():
         
                 ## Improvement is to make a case statement?
                 if   admin_choice == '1':     ## Add New Product Option                 
-                    my_catalog.display_product(current_user)
+                    my_catalog.display_product(current_user, my_catalog)
                 elif admin_choice == '2':
                     
                     user_choice = 'y'
