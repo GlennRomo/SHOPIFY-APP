@@ -148,7 +148,7 @@ def display_products(products):
     for product in products:
         print(product)
         
-# def repeat_choice_logic(current_user, my_catalog, my_cart, prompt_exiting,prompt_action, prompt_id):     ## could improve prompt by using a list and use array index for reference
+# def repeat_choice_logic(current_user, my_catalog, my_cart, prompt_exiting,prompt_action, prompt_id, prompt_quantity, prompt_another):     ## could improve prompt by using a list and use array index for reference
 
 #     choice = 'y'
     
@@ -167,31 +167,33 @@ def display_products(products):
 #                 if choice =='n':
 #                     break
                 
-#                 product_id = input(prompt_id)    ## prompt_id = "\nEnter the product ID of the item you would like to add to your cart: "
+#                 product_id = input(prompt_id)   ## prompt_id = "\nEnter the product id: "
                 
 #                 if product_id == 'x':
 #                     break
                 
+#                 ### This is the logic that always changes. Do I put an 'option' argument which triggers an if-else cascade for actions?
+                
 #                 if my_catalog.is_id_available(current_user, product_id):
-#                     quantity = input("\nHow many would you like to add to your cart: ")
+#                     quantity = input(prompt_quantity)       ## prompt_quantity = "\nHow many would you like to add to your cart: "
 #                     my_cart.add_cartproduct(current_user, product_id, quantity, my_catalog)
                     
-#                     print("\nDoes this say 'New product added!' ever? If not, add. Would you like to add another product to the cart? y/n")
+#                     print(prompt_another)       ## prompt_another = "\nDoes this say 'New product added!' ever? If not, add. Would you like to add another product to the cart? y/n"
 #                     choice  = input("\nEnter your choice: ")
 #                 else:
 #                     print("\nThat product ID does not exist in the catalog. Please enter a valid product ID. Enter x to exit.")
                 
 #         elif choice == 'x':
-#             print("\nExiting addition to cart...")
+#             print(prompt_exiting)
 #             break
 #         else:
-#             print("Invalid choice. Please try again.")
+#             print("Invalid choice. Please try again.")      ## this prompt can stay the same as it is used universally in all choice logic
         
 #         if product_id == 'x':
-#             print("\nExiting addition to cart...")
+#             print(prompt_exiting)
 #             break
 #         elif product_id == 'n':
-#             print("\nExiting addition to cart...")
+#             print(prompt_exiting)
 #             break
 
 
@@ -300,16 +302,19 @@ def main():
                                 if choice =='n':
                                     break
                                 
-                                product_id = input("\nEnter the product ID of the item you would like to add to your cart: ")
+                                product_id = input("\nEnter the product id: ")
                                 
                                 if product_id == 'x':
                                     break
                                 else:
                                     if my_catalog.is_id_available(current_user, product_id):
                                         quantity = input("\nHow many would you like to add to your cart: ")
+                                        
                                         my_cart.add_cartproduct(current_user, product_id, quantity, my_catalog)
                                         
-                                        print("\nDoes this say 'New product added!' ever? If not, add. Would you like to add another product to the cart? y/n")
+                                        print("\nProduct added!")
+                                        
+                                        print("\nWould you like to add another product to the cart? y/n")
                                         choice  = input("\nEnter your choice: ")
                                     else:
                                         print("\nThat product ID does not exist in the catalog. Please enter a valid product ID. Enter x to exit.")
@@ -362,7 +367,9 @@ def main():
                             
                             print("\nExiting new product addition...")
                             break
+                        
                         elif choice == 'x':
+                            print("\nLet's add a new product:")
                             break
                         
                         elif choice == 'y':
@@ -371,25 +378,37 @@ def main():
                             
                             while True:
                                 
-                                ## Request info for new products based on needs below:
-                                product_id    = input("\nEnter the product id: ") #This option should be the next iteration in the list, IDs are autodetermined
-                                
-                                if my_catalog.is_id_available(current_user, product_id):
-                                    print("A product with this ID already exists. Please enter a different ID.") 
-                                else:                          
-                                    product_name  = input("\nEnter the product name: ")
-                                    category_id   = input("Enter the product category name: ") # This option must choose from existing list
-                                    price = input("Enter the product price: ")
-                            
-                                    my_catalog.add_product(current_user, product_id, product_name, category_id, price)
-                            
-                                    print("\nNew product added!")
+                                if choice =='n':
                                     break
+                                
+                                product_id = input("\nEnter the product id: ")
+                                
+                                if product_id == 'x':
+                                    break
+                                else:
+                                    if my_catalog.is_id_available(current_user, product_id):
+                                        print("A product with this ID already exists. Please enter a different ID.") 
+                                    else:                          
+                                        product_name    = input("\nEnter the product name: ")
+                                        category_id     = input("Enter the product category name: ") # This option must choose from existing list
+                                        price           = input("Enter the product price: ")
+                                
+                                        my_catalog.add_product(current_user, product_id, product_name, category_id, price)
+                                
+                                        print("\nProduct added!")
+                                        
+                                        print("\nWould you like to add another product to the catalog? y/n")
+                                        choice  = input("\nEnter your choice: ")
+                                                        
                         else:
                             print("Invalid choice. Please try again.")
-                            
-                        print("\nWould you like to add another product? y/n")
-                        choice  = input("\nEnter your choice: ")
+                        
+                        if product_id == 'x':
+                            print("\nExiting deletion from catalog...")
+                            break
+                        elif product_id == 'n':
+                            print("\nExiting deletion from catalog...")
+                            break
                     
                 elif choice == '3':
                     print("\nModify Existing Product Option Coming Soon!")
@@ -418,7 +437,7 @@ def main():
                                 if choice =='n':
                                     break
                                 
-                                product_id = input("\nEnter the product ID of the item you would like to delete from the catalog: ")
+                                product_id = input("\nEnter the product id: ")
                                 
                                 if product_id == 'x':
                                     break
@@ -426,6 +445,8 @@ def main():
                                     if my_catalog.is_id_available(current_user, product_id):
                                         
                                         my_catalog.remove_product(current_user, product_id)
+                                        
+                                        print("\nProduct deleted!")
                                         
                                         print("\nWould you like to remove another product from the catalog? y/n")
                                         choice  = input("\nEnter your choice: ")
