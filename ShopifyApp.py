@@ -66,8 +66,12 @@ class Catalog:
             
                 
     def remove_product(self, current_user, product_id):
-        print("\nDelete Existing Product Option Coming Soon!")
-            
+        # print("\nDelete Existing Product Option Coming Soon!")
+        if 'Delete Product' in current_user.user_type.rights:
+            #Logic to delete product
+            print("\nThis is where a product will get deleted.")
+        else:
+            print("\nERROR: Current user has no permissions to delete products") 
         
     def modifiy_product(self, current_user, product_id, product_name, category_id, price):
         if 'Modify Products' in current_user.user_type.rights:
@@ -143,6 +147,52 @@ def display_products(products):
     print("\nList of Products:")
     for product in products:
         print(product)
+        
+# def repeat_choice_logic(current_user, my_catalog, my_cart, prompt_exiting,prompt_action, prompt_id):     ## could improve prompt by using a list and use array index for reference
+
+#     choice = 'y'
+    
+#     while True: 
+        
+#         if choice == 'n':
+#             print(prompt_exiting)               ## prompt_exiting = "\nExiting addition to cart..."
+#             break
+            
+#         elif choice == 'y':
+            
+#             print(prompt_action)                ## prompt_action = "\nLet's add some products to your cart:"
+            
+#             while True:
+                
+#                 if choice =='n':
+#                     break
+                
+#                 product_id = input(prompt_id)    ## prompt_id = "\nEnter the product ID of the item you would like to add to your cart: "
+                
+#                 if product_id == 'x':
+#                     break
+                
+#                 if my_catalog.is_id_available(current_user, product_id):
+#                     quantity = input("\nHow many would you like to add to your cart: ")
+#                     my_cart.add_cartproduct(current_user, product_id, quantity, my_catalog)
+                    
+#                     print("\nDoes this say 'New product added!' ever? If not, add. Would you like to add another product to the cart? y/n")
+#                     choice  = input("\nEnter your choice: ")
+#                 else:
+#                     print("\nThat product ID does not exist in the catalog. Please enter a valid product ID. Enter x to exit.")
+                
+#         elif choice == 'x':
+#             print("\nExiting addition to cart...")
+#             break
+#         else:
+#             print("Invalid choice. Please try again.")
+        
+#         if product_id == 'x':
+#             print("\nExiting addition to cart...")
+#             break
+#         elif product_id == 'n':
+#             print("\nExiting addition to cart...")
+#             break
 
 
 def main():
@@ -200,7 +250,7 @@ def main():
                         logged_in = True
                         break
                 else:
-                    print("you keep making invalid choices, exiting.")
+                    print("5 invalid choices made, returning to main menu.")
                     logged_in = False
                     
             elif choice == '2':
@@ -222,47 +272,48 @@ def main():
                 
                 print("\nUser Options:")
                 print("1. View Cart Contents\n2. Add Items to Your Cart\n3. Remove Items from Your Cart\n4. View Product List\n5. View Product Category List\n6. Filter and View Product List by Category\n7. Checkout\n8. Logout")
-                user_choice = input("\nEnter your choice: ")
+                choice = input("\nEnter your choice: ")
             
-                if user_choice == '1':       ## Display cart items 
+                if choice == '1':       ## Display cart items 
                     # print("\nView Cart Contents Option Coming Soon!")
                     my_cart.display_cart(current_user, my_cart, my_catalog)
-                elif user_choice == '2':    ## Add Items to Your Cart Option Coming Soon!")
+                elif choice == '2':    ## Add Items to Your Cart Option Coming Soon!")
                     
-                    user_choice = 'y'
+                    choice = 'y'
                     
                     while True: 
                         
-                        if user_choice == 'n':
+                        if choice == 'n':
+                            print("\nExiting addition to cart...")
+                            break
+                        
+                        elif choice == 'x':
                             print("\nExiting addition to cart...")
                             break
                             
-                        elif user_choice == 'y':
+                        elif choice == 'y':
                             
                             print("\nLet's add some products to your cart:")
                             
                             while True:
                                 
-                                if user_choice =='n':
+                                if choice =='n':
                                     break
                                 
                                 product_id = input("\nEnter the product ID of the item you would like to add to your cart: ")
                                 
                                 if product_id == 'x':
                                     break
-                                
-                                if my_catalog.is_id_available(current_user, product_id):
-                                    quantity = input("\nHow many would you like to add to your cart: ")
-                                    my_cart.add_cartproduct(current_user, product_id, quantity, my_catalog)
-                                    
-                                    print("\nWould you like to add another product to the cart? y/n")
-                                    user_choice  = input("\nEnter your choice: ")
                                 else:
-                                    print("\nThat product ID does not exist in the catalog. Please enter a valid product ID. Enter x to exit.")
+                                    if my_catalog.is_id_available(current_user, product_id):
+                                        quantity = input("\nHow many would you like to add to your cart: ")
+                                        my_cart.add_cartproduct(current_user, product_id, quantity, my_catalog)
+                                        
+                                        print("\nDoes this say 'New product added!' ever? If not, add. Would you like to add another product to the cart? y/n")
+                                        choice  = input("\nEnter your choice: ")
+                                    else:
+                                        print("\nThat product ID does not exist in the catalog. Please enter a valid product ID. Enter x to exit.")
                                 
-                        elif user_choice == 'x':
-                            print("\nExiting addition to cart...")
-                            break
                         else:
                             print("Invalid choice. Please try again.")
                         
@@ -272,21 +323,19 @@ def main():
                         elif product_id == 'n':
                             print("\nExiting addition to cart...")
                             break
-                        
-
-                        
-                elif user_choice == '3':
+                                                
+                elif choice == '3':
                     print("\nRemove Items from Your Cart Option Coming Soon!")
-                elif user_choice == '4':
+                elif choice == '4':
                     # print("\nView Product List Option Coming Soon!")
                     my_catalog.display_product(current_user, my_catalog)
-                elif user_choice == '5':
+                elif choice == '5':
                     print("\nView Product Category List Option Coming Soon!")
-                elif user_choice == '6':
+                elif choice == '6':
                     print("\nFilter and View Product List by Category Option Coming Soon!")
-                elif user_choice == '7':
+                elif choice == '7':
                     print("\nCheckout Option Coming Soon!")
-                elif user_choice == '8':
+                elif choice == '8':
                     print("logged out.")
                     logged_in = False
                 else:
@@ -297,24 +346,26 @@ def main():
                             
                 print("\nAdmin Options:")
                 print("1.  View Product List\n2.  Add New Product\n3.  Modify Existing Product\n4.  Delete Existing Product\n5.  View Product Category List\n6.  Add New Product Category\n7.  Modify Existing Product Category\n8.  Delete Existing Product Category\n9.  View User List\n10. Add New User\n11. Modify Existing User\n12. Delete Existing User\n13. Logout")
-                admin_choice = input("\nEnter your choice: ")
+                choice = input("\nEnter your choice: ")
         
                 ## Improvement is to make a case statement?
-                if   admin_choice == '1':     ## Display Product List Option                 
+                if   choice == '1':     ## Display Product List Option                 
                     my_catalog.display_product(current_user, my_catalog)
                     
-                elif admin_choice == '2':     ## Add New Product Option 
+                elif choice == '2':     ## Add New Product Option 
                     
-                    user_choice = 'y'
+                    choice = 'y'
                     
                     while True: 
                         
-                        if user_choice == 'n':
+                        if choice == 'n':
                             
                             print("\nExiting new product addition...")
                             break
+                        elif choice == 'x':
+                            break
                         
-                        elif user_choice == 'y':
+                        elif choice == 'y':
                             
                             print("\nLet's add a new product:")
                             
@@ -334,35 +385,80 @@ def main():
                             
                                     print("\nNew product added!")
                                     break
-                        elif user_choice == 'x':
-                            break
                         else:
                             print("Invalid choice. Please try again.")
                             
                         print("\nWould you like to add another product? y/n")
-                        user_choice  = input("\nEnter your choice: ")
+                        choice  = input("\nEnter your choice: ")
                     
-                elif admin_choice == '3':
+                elif choice == '3':
                     print("\nModify Existing Product Option Coming Soon!")
-                elif admin_choice == '4':
-                    print("\nDelete Existing Product Option Coming Soon!")
-                elif admin_choice == '5':
+                elif choice == '4':
+                    # print("\nDelete Existing Product Option Coming Soon!")                                    
+                    
+                    choice = 'y'
+                    
+                    while True: 
+                        
+                        if choice == 'n':
+                            
+                            print("\nExiting product removal...")
+                            break
+                        
+                        elif choice == 'x':
+                            print("\nExiting deletion from catalog...")
+                            break
+                        
+                        elif choice == 'y':
+                            
+                            print("\nLet's delete a product:")
+                            
+                            while True:
+                                
+                                if choice =='n':
+                                    break
+                                
+                                product_id = input("\nEnter the product ID of the item you would like to delete from the catalog: ")
+                                
+                                if product_id == 'x':
+                                    break
+                                else:
+                                    if my_catalog.is_id_available(current_user, product_id):
+                                        
+                                        my_catalog.remove_product(current_user, product_id)
+                                        
+                                        print("\nWould you like to remove another product from the catalog? y/n")
+                                        choice  = input("\nEnter your choice: ")
+                                    else:
+                                        print("\nThat product ID does not exist in the catalog. Please enter a valid product ID. Enter x to exit.")
+                                                        
+                        else:
+                            print("Invalid choice. Please try again.")
+                        
+                        if product_id == 'x':
+                            print("\nExiting deletion from catalog...")
+                            break
+                        elif product_id == 'n':
+                            print("\nExiting deletion from catalog...")
+                            break
+                    
+                elif choice == '5':
                     print("View Product Category List Option Coming Soon!")
-                elif admin_choice == '6':
+                elif choice == '6':
                     print("\nAdd New Product Category Option Coming Soon!")
-                elif admin_choice == '7':
+                elif choice == '7':
                     print("\nModify Existing Product Category Option Coming Soon!")
-                elif admin_choice == '8':
+                elif choice == '8':
                     print("\nDelete Existing Product Category Option Coming Soon!")
-                elif admin_choice == '9':                    
+                elif choice == '9':                    
                     display_users(users)
-                elif admin_choice == '10':                    
+                elif choice == '10':                    
                     print("\nAdd New User Option Coming Soon!")
-                elif admin_choice == '11':
+                elif choice == '11':
                     print("\nModify Existing User Option Coming Soon!")
-                elif admin_choice == '12':
+                elif choice == '12':
                     print("\nDelete Existing User Option Coming Soon!")
-                elif admin_choice == '13':
+                elif choice == '13':
                     print("logged out.")
                     logged_in = False
                 else:
@@ -390,6 +486,9 @@ Function to add
     - Define a new class for switch statements that includes methods for user and admin option menus
     - When a user logs out, it clears the cart
     - Eliminate redundancy logic to check if product ID exists in main() and user 'Add Cart Product' / admin 'Add product' options
+    - Finish 'repeat_choice_logic' method that will contain the repetitive logic for user decision for repeating add/remove/modify logic
+        - Reduce logic code lines by implementing OR statements and other logic improvements
+        - Update 'add_new_product' admin option logic to follow the new 'repeat_choice_logic' as it is outdated
     
 Useful Functions:
     rando = input('input something!: ')     #breaks the code for troubleshooting
