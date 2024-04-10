@@ -367,8 +367,7 @@ def main():
                 print("1. View Cart Contents\n2. Add Items to Your Cart\n3. Remove Items from Your Cart\n4. View Product List\n5. View Product Category List\n6. Filter and View Product List by Category\n7. Checkout\n8. Logout")
                 choice = input("\nEnter your choice: ")
             
-                if choice == '1':       ## Display cart items 
-                    # print("\nView Cart Contents Option Coming Soon!")
+                if choice == '1':       ## View Cart Contents Option 
                     my_cart.display_cart(current_user, my_cart, my_catalog)
                     
                 elif choice == '2':    ## Add Items to Your Cart Option
@@ -401,9 +400,9 @@ def main():
                 
                     repeat_choice_logic(current_user, my_catalog, my_cart, prompt_exiting, prompt_action, prompt_id, prompt_name, prompt_category, prompt_price, prompt_quantity, prompt_success, prompt_another, option)
 
-                elif choice == '4':
-                    # print("\nView Product List Option Coming Soon!")
+                elif choice == '4':    ## View Product Catalog Option 
                     my_catalog.display_product(current_user, my_catalog)
+                    
                 elif choice == '5':
                     print("\nView Product Category List Option Coming Soon!")
                 elif choice == '6':
@@ -464,23 +463,32 @@ def main():
                     
                 elif choice == '5':
                     print("View Product Category List Option Coming Soon!")
+                    
                 elif choice == '6':
                     print("\nAdd New Product Category Option Coming Soon!")
+                    
                 elif choice == '7':
                     print("\nModify Existing Product Category Option Coming Soon!")
+                    
                 elif choice == '8':
                     print("\nDelete Existing Product Category Option Coming Soon!")
-                elif choice == '9':                    
+                    
+                elif choice == '9':     ## View User List Option         
                     display_users(users)
+                    
                 elif choice == '10':                    
                     print("\nAdd New User Option Coming Soon!")
+                    
                 elif choice == '11':
                     print("\nModify Existing User Option Coming Soon!")
+                    
                 elif choice == '12':
                     print("\nDelete Existing User Option Coming Soon!")
-                elif choice == '13':
+                    
+                elif choice == '13':    ## Logout Option
                     print("logged out.")
                     logged_in = False
+                    
                 else:
                     print("Invalid choice. Please try again.")
                     
