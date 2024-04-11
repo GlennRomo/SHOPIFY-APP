@@ -61,22 +61,24 @@ class Catalog:
         # print("\nDelete Existing Product Option Coming Soon!")
         if 'Delete Product' in current_user.user_type.rights:
             #Logic to delete product
-            print("\nThis is where a product will get deleted.")
+            if product_id not in self.product_list:
+                print("\nThis product does not exist. Please identify an existing product.")
+            else:
+                del self.product_list[product_id]
         else:
             print("\nERROR: Current user has no permissions to delete products") 
         
         
-    def modifiy_product(self, current_user, product_id, product_name, category_id, price):
+    def modify_product(self, current_user, product_id, product_name, category_id, price):
         if 'Modify Products' in current_user.user_type.rights:
             #Logic to modify product
             if product_id not in self.product_list:
                 print("\nERROR: The product does not exist")
             else:
                 self.product_list[product_id] = Product(product_id, product_name, category_id, price)
-                print("\nProduct Modified!")
                 print(self.product_list[product_id])
         else:
-            print("\nERROR: current user has no permissions to add products")
+            print("\nERROR: current user has no permissions to modify products")
             
             
     def display_product(self, current_user, my_catalog):
@@ -129,7 +131,7 @@ class Cart:
             #Logic to remove product
             
             if product_id not in my_catalog.product_list:
-                print("\nThis product does not exists. Please identify an existing product.")
+                print("\nThis product does not exist. Please identify an existing product.")
             else:
                 if next_choice == '2':
                     if self.cart_list[product_id].quantity >= quantity and self.cart_list[product_id].quantity > 0:
@@ -140,7 +142,7 @@ class Cart:
                 elif next_choice == '1':
                     del self.cart_list[product_id]
         else:
-            print("\nERROR: Current user has no permissions to add products")
+            print("\nERROR: Current user has no permissions to remove cart products")
         
         
     def display_cart(self,current_user, my_cart, my_catalog):
@@ -233,31 +235,31 @@ def repeat_choice_logic(current_user, my_catalog, my_cart, prompt_exiting,prompt
                                             
                                         my_cart.remove_cartproduct(current_user, next_choice, product_id, quantity, my_catalog)
                                         
-                                        print("\nProduct deleted from cart!")
+                                        print(prompt_success)
                                             
                                         break
                                     else:
                                         # Input is not valid, prompt the user to try again
                                         print("Invalid input. Please enter either 1 or 2. Enter x to exit.")
                             
-                            print("\nWould you like to remove another product from the cart? y/n")
+                            print(prompt_another)
                             choice  = input("\nEnter your choice: ")
                         else:
                             print("\nThat product ID does not exist in the catalog. Please enter a valid product ID. Enter x to exit.")
                             
                     elif option == 'Add Catalog Product':
                         if my_catalog.is_id_available(current_user, product_id):
-                            print("A product with this ID already exists. Please enter a different ID.") 
+                            print("A product with this ID already exists. Please enter a different ID. Enter x to exit.") 
                         else:                          
-                            product_name    = input("\nEnter the product name: ")
-                            category_id     = input("Enter the product category name: ") # This option must choose from existing list
-                            price           = input("Enter the product price: ")
+                            product_name    = input(prompt_name)
+                            category_id     = input(prompt_category) # This option must choose from existing list
+                            price           = input(prompt_price)
                     
                             my_catalog.add_product(current_user, product_id, product_name, category_id, price)
                     
-                            print("\nProduct added!")
+                            print(prompt_success)
                             
-                            print("\nWould you like to add another product to the catalog? y/n")
+                            print(prompt_another)
                             choice  = input("\nEnter your choice: ")
                             
                     elif option == 'Delete Catalog Product':
@@ -265,14 +267,29 @@ def repeat_choice_logic(current_user, my_catalog, my_cart, prompt_exiting,prompt
                             
                             my_catalog.remove_product(current_user, product_id)
                             
-                            print("\nProduct deleted!")
+                            print(prompt_success)
                             
-                            print("\nWould you like to remove another product from the catalog? y/n")
+                            print(prompt_another)
                             choice  = input("\nEnter your choice: ")
                         else:
                             print("\nThat product ID does not exist in the catalog. Please enter a valid product ID. Enter x to exit.")
-                                               
-                        
+                                    
+                    elif option == 'Modify Catalog Product':
+                        if my_catalog.is_id_available(current_user, product_id):
+                            
+                            product_name    = input(prompt_name)
+                            category_id     = input(prompt_category) # This option must choose from existing list
+                            price           = input(prompt_price)
+                            
+                            my_catalog.modify_product(current_user, product_id, product_name, category_id, price)
+                            
+                            print(prompt_success)
+                            
+                            print(prompt_another)
+                            choice  = input("\nEnter your choice: ")
+                        else:
+                            print("\nThat product ID does not exist in the catalog. Please enter a valid product ID. Enter x to exit.")
+                
                     else:
                         print("No option set for logic condition.")
                         
@@ -326,7 +343,7 @@ def main():
             
             # If not already logged in, the system will request the user to login or exit
             
-            print("\nMain Menu:\n1. User Login\n2. Exit")
+            print("\nMain Menu:\n1. Login\n2. Exit")
             choice = input("\nEnter your choice: ")
     
             if choice == '1':
@@ -442,10 +459,23 @@ def main():
                     repeat_choice_logic(current_user, my_catalog, my_cart, prompt_exiting, prompt_action, prompt_id, prompt_name, prompt_category, prompt_price, prompt_quantity, prompt_success, prompt_another, option)
                            
                     
-                elif choice == '3':
-                    print("\nModify Existing Product Option Coming Soon!")
-                elif choice == '4':
-                    # print("\nDelete Existing Product Option Coming Soon!")                                    
+                elif choice == '3':     ## Modify Existing Product Option
+                    
+                    prompt_exiting      = "\nExiting product modification..."
+                    prompt_action       = "\nLet's modify a product:"
+                    prompt_id           = "\nEnter the product id: "
+                    prompt_name         = "\nWhat would you like to change the name to?"
+                    prompt_category     = "\nWhat would you like to change the category to?"
+                    prompt_price        = "\nWhat would you like to change the price to?"
+                    prompt_quantity     = ""
+                    prompt_success      = "\nProduct modified!"
+                    prompt_another      = "\nWould you like to modify another product from the catalog? y/n"
+                    option              = "Modify Catalog Product"
+                
+                    repeat_choice_logic(current_user, my_catalog, my_cart, prompt_exiting, prompt_action, prompt_id, prompt_name, prompt_category, prompt_price, prompt_quantity, prompt_success, prompt_another, option)
+
+                    
+                elif choice == '4':     ## Delete Existing Product Option                                 
                     
                     prompt_exiting      = "\nExiting product removal..."
                     prompt_action       = "\nLet's delete a product:"
