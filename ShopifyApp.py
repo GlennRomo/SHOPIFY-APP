@@ -211,14 +211,14 @@ class Cart:
         return total
     
     
-class Payment:
+class Payment:      ## How do I initialize this function without defining a system variable (the output kept saying "payment_logic() missing 1 required positional argument: 'total_price'")
     
-    def __init__(self, current_user, total_price):
-        self.current_user   = current_user
-        self.total_price    = total_price
+    # def __init__(self, current_user, total_price):
+    #     self.current_user   = current_user
+    #     self.total_price    = total_price
     
-    def payment_logic(self, current_user, total_price):
-        print("temp")
+    def payment_choice_logic(self, current_user, total_price):
+        print(current_user, total_price)
     
         
 def display_users(users):
@@ -423,6 +423,9 @@ def main():
     # Add System Tax Percentage
     tax_percentage = 0.12
     
+    # Add System Payment
+    payment_object = Payment()
+    
     logged_in = False
     
     print("\n\nWelcome to the Demo Marketplace")
@@ -528,7 +531,7 @@ def main():
                     print("Your total tax is: \t$", tax_price)
                     print("Your total price is: $", total_price)
                     
-                    Payment.payment_logic(current_user, total_price)
+                    payment_object.payment_choice_logic(current_user, total_price)
                     
                 elif choice == '8':
                     print("logged out.")
