@@ -139,12 +139,14 @@ class Catalog:
 
 
 class Cart_product:
-    def __init__(self, product_id, quantity):
+    def __init__(self, product_id, quantity, my_catalog, my_categories):
         self.product_id = product_id
-        self.quantity = quantity
+        self.quantity   = quantity
+        self.category   = my_categories.category_list[product_id].category_name
+        self.price      = my_catalog.product_list[product_id].price
         
-    def cart_product_total_price(self):
-        print("temp")
+    def total_price(self):
+        return self.quantity * self.price
 
 class Cart:
     cart_list = {}
@@ -157,7 +159,7 @@ class Cart:
                 print("\nThis product does not exists. Please identify an existing product.")
             else:
                 quantity = int(quantity)  ## Build in error if input is not a number
-                self.cart_list[product_id] = Cart_product(product_id, quantity)                    
+                self.cart_list[product_id] = Cart_product(product_id, quantity, my_catalog, my_categories)                    
         else:
             print("\nERROR: Current user has no permissions to add products")
             
@@ -172,7 +174,7 @@ class Cart:
                 if next_choice == '2':
                     if self.cart_list[product_id].quantity >= quantity and self.cart_list[product_id].quantity > 0:
                         new_quantity = self.cart_list[product_id].quantity - quantity
-                        self.cart_list[product_id] = Cart_product(product_id, new_quantity)
+                        self.cart_list[product_id] = Cart_product(product_id, new_quantity, my_catalog)
                     else:
                         print("You must select a number of products that are less than the amount of that item in the cart and a number higher than zero.")
                 elif next_choice == '1':
@@ -194,8 +196,19 @@ class Cart:
             print("\nERROR: current user has no permissions to add products")
             
             
-    def cart_total_price(self):
-        print("temp")
+    def cart_total_price(self, current_user):
+        if 'Checkout' in current_user.user_type.rights:
+            if not self.cart_list:
+                print("\nCart is empty.")
+            else:                
+                total = 0
+                for product_id, item in self.cart_list.items():
+                    total += item.total_price()
+
+        else:
+            print("\nERROR: current user has no permissions to add products")
+            
+        return total
     
         
 def display_users(users):
@@ -358,7 +371,7 @@ def repeat_choice_logic(current_user, my_catalog, my_cart, my_categories, prompt
 def main():
     
     #user rights
-    user_rights  = ["View Products", "View Cart", "Add Cart Product", "Remove Cart Product"]
+    user_rights  = ["View Products", "View Cart", "Add Cart Product", "Remove Cart Product", "Checkout"]
     admin_rights = ["Add New Product", "View Products", "Modify Products", "Delete Product", "Add Category", "Modify Category", "Delete Category", "Create User", "Display Users", "Delete User"]
     
     # User_types
@@ -378,6 +391,9 @@ def main():
     my_categories.add_category(users['a'], "2", "Upperwear")
     my_categories.add_category(users['a'], "3", "Lowerwear")
     my_categories.add_category(users['a'], "4", "Hats")
+    my_categories.add_category(users['a'], "5", "Electronics")
+    my_categories.add_category(users['a'], "6", "Appliances")
+    my_categories.add_category(users['a'], "7", "Food")
     
     
     # Add System Products    
@@ -387,6 +403,9 @@ def main():
     my_catalog.add_product(users['a'], "2", "Coats", "2", 99, my_categories)
     my_catalog.add_product(users['a'], "3", "Jackets", "2", 150, my_categories)
     my_catalog.add_product(users['a'], "4", "Caps", "4", 50, my_categories)
+    my_catalog.add_product(users['a'], "5", "Washing Machine", "6", 50, my_categories)
+    my_catalog.add_product(users['a'], "6", "TV", "5", 50, my_categories)
+    my_catalog.add_product(users['a'], "7", "Bread", "7", 50, my_categories)
     
     # Add System Cart
     my_cart = Cart()
@@ -487,8 +506,10 @@ def main():
                 elif choice == '6':
                     print("\nFilter and View Product List by Category Option Coming Soon!")
                     
-                elif choice == '7':
-                    print("\nCheckout Option Coming Soon!")
+                elif choice == '7':     ## Checkout Option
+                    total_price = my_cart.cart_total_price(current_user)
+                    
+                    print("Your total price is: $", total_price)
                     
                 elif choice == '8':
                     print("logged out.")
@@ -636,4 +657,6 @@ Functionality to add
     - Create an error logic choice if a number is not provided for quantity - will have issue when converting to an int
     - Fix the logic in remove_cartproduct since it can go from 'You must select a number of products that are less than...' straight to 'Product deleted from cart!' even if nothing is deleted
     - Modify product in admin login should be able to choose which attributes they want to edit (i.e. product_name, category_id, price) rather than enter all
+    - If a product_ID already exists in the cart, the additional quantity addition should sum to the original cart quantity after a user prompt to confirm addition with total quantity desired
+    - Inputs that convert to int() must have validation that a number was entered or the code will error out
 """
