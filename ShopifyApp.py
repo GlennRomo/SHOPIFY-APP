@@ -210,6 +210,16 @@ class Cart:
             
         return total
     
+    
+class Payment:
+    
+    def __init__(self, current_user, total_price):
+        self.current_user   = current_user
+        self.total_price    = total_price
+    
+    def payment_logic(self, current_user, total_price):
+        print("temp")
+    
         
 def display_users(users):
     print("\nList of Users:")
@@ -410,6 +420,9 @@ def main():
     # Add System Cart
     my_cart = Cart()
     
+    # Add System Tax Percentage
+    tax_percentage = 0.12
+    
     logged_in = False
     
     print("\n\nWelcome to the Demo Marketplace")
@@ -507,9 +520,15 @@ def main():
                     print("\nFilter and View Product List by Category Option Coming Soon!")
                     
                 elif choice == '7':     ## Checkout Option
-                    total_price = my_cart.cart_total_price(current_user)
+                    cart_price = my_cart.cart_total_price(current_user)
+                    tax_price = cart_price * tax_percentage
+                    total_price = cart_price + tax_price
                     
+                    print("\nYour total price is: \t$", cart_price)
+                    print("Your total tax is: \t$", tax_price)
                     print("Your total price is: $", total_price)
+                    
+                    Payment.payment_logic(current_user, total_price)
                     
                 elif choice == '8':
                     print("logged out.")
