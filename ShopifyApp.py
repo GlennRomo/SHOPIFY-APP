@@ -60,6 +60,14 @@ class Category_catalog:
 
         else:
             print("\nERROR: current user has no permissions to view categories")
+            
+            
+    def is_id_available(self, current_user, category_id):
+        if 'View Products' in current_user.user_type.rights:
+            #Logic to check if a product already exists in the catalog
+            return category_id in self.category_list 
+        else:
+            print("\nERROR: Current user has no permissions to check products")
 
     
 class Product:
@@ -98,14 +106,13 @@ class Catalog:
             print("\nERROR: Current user has no permissions to delete products") 
         
         
-    def modify_product(self, current_user, product_id, product_name, category_id, price):
+    def modify_product(self, current_user, product_id, product_name, category_id, price, my_categories):
         if 'Modify Products' in current_user.user_type.rights:
             #Logic to modify product
             if product_id not in self.product_list:
                 print("\nERROR: The product does not exist")
             else:
-                self.product_list[product_id] = Product(product_id, product_name, category_id, price)
-                print(self.product_list[product_id])
+                self.product_list[product_id] = Product(product_id, product_name, category_id, price, my_categories)
         else:
             print("\nERROR: current user has no permissions to modify products")
             
@@ -114,10 +121,10 @@ class Catalog:
         if 'View Products' in current_user.user_type.rights:
             #Logic to display product
             
-            print("\nProduct ID\tProduct Name\tCategory ID\tPrice\n")
+            print("\nProduct ID\tProduct Name\tCategory Name\tPrice\n")
 
             for product_id, value in my_catalog.product_list.items():
-                print(f"{product_id}\t\t\t{value.product_name}\t\t\t{value.category_id}\t\t{value.price}")
+                print(f"{product_id}\t\t\t{value.product_name}\t\t\t{value.category_name}\t\t{value.price}")
 
         else:
             print("\nERROR: current user has no permissions to view products")
@@ -142,7 +149,7 @@ class Cart_product:
 class Cart:
     cart_list = {}
     
-    def add_cartproduct(self, current_user, product_id, quantity, my_catalog):
+    def add_cartproduct(self, current_user, product_id, quantity, my_catalog, my_categories):
         if 'Add Cart Product' in current_user.user_type.rights:
             #Logic to add product
             
@@ -237,7 +244,7 @@ def repeat_choice_logic(current_user, my_catalog, my_cart, my_categories, prompt
                         if my_catalog.is_id_available(current_user, product_id):
                             quantity = input(prompt_quantity)       ## prompt_quantity = "\nHow many would you like to add to your cart: "
                             
-                            my_cart.add_cartproduct(current_user, product_id, quantity, my_catalog)
+                            my_cart.add_cartproduct(current_user, product_id, quantity, my_catalog, my_categories)
                             
                             print(prompt_success)        ##prompt_success = "\nProduct added!"
                             
@@ -284,7 +291,7 @@ def repeat_choice_logic(current_user, my_catalog, my_cart, my_categories, prompt
                             category_id     = input(prompt_categoryID) # This option must choose from existing list
                             price           = input(prompt_price)
                     
-                            my_catalog.add_product(current_user, product_id, product_name, category_id, price)
+                            my_catalog.add_product(current_user, product_id, product_name, category_id, price, my_categories)
                     
                             print(prompt_success)
                             
@@ -310,7 +317,7 @@ def repeat_choice_logic(current_user, my_catalog, my_cart, my_categories, prompt
                             category_id     = input(prompt_categoryID) # This option must choose from existing list
                             price           = input(prompt_price)
                             
-                            my_catalog.modify_product(current_user, product_id, product_name, category_id, price)
+                            my_catalog.modify_product(current_user, product_id, product_name, category_id, price, my_categories)
                             
                             print(prompt_success)
                             
@@ -321,11 +328,11 @@ def repeat_choice_logic(current_user, my_catalog, my_cart, my_categories, prompt
                             
                     elif option == 'Add Catalog Category':
                         if my_categories.is_id_available(current_user, product_id):
+                            print("\nThat catalog ID already exists in the catalog. Please enter a valid catalog ID. Enter x to exit.")
                             
-                            category_name   = input(prompt_name)
-                            category_id     = input(prompt_categoryID) # This option must choose from existing list
+                        else:
+                            category_id     = product_id
                             category_name   = input(prompt_categoryname)
-                            price           = input(prompt_price)
                             
                             my_categories.add_category(current_user, category_id, category_name)
                             
@@ -333,13 +340,10 @@ def repeat_choice_logic(current_user, my_catalog, my_cart, my_categories, prompt
                             
                             print(prompt_another)
                             choice  = input("\nEnter your choice: ")
-                        else:
-                            print("\nThat product ID does not exist in the catalog. Please enter a valid product ID. Enter x to exit.")
-                
+                            
                     else:
                         print("No option set for logic condition.")
                         
-                
         else:
             print("Invalid choice. Please try again.")
         
@@ -528,8 +532,8 @@ def main():
                     prompt_exiting      = "\nExiting product modification..."
                     prompt_action       = "\nLet's modify a product:"
                     prompt_id           = "\nEnter the product id: "
-                    prompt_name         = "\nWhat would you like to change the name to?"
-                    prompt_categoryID   = "\nWhat would you like to change the category to?"
+                    prompt_name         = "\nWhat would you like to change the name to? "
+                    prompt_categoryID   = "\nWhich category would you like to assign this product to?"
                     prompt_categoryname = ""
                     prompt_price        = "\nWhat would you like to change the price to?"
                     prompt_quantity     = ""
@@ -565,10 +569,10 @@ def main():
                     
                     prompt_exiting      = "\nExiting new category addition..."
                     prompt_action       = "\nLet's add a new category:"
-                    prompt_id           = "\nEnter the category id: "
+                    prompt_id           = "\nEnter the new category id: "
                     prompt_name         = ""
-                    prompt_categoryID     = "\nEnter the new category id: "
-                    prompt_categoryname = ""
+                    prompt_categoryID   = "\nEnter the new category id: "
+                    prompt_categoryname = "\nEnter the new category name: "
                     prompt_price        = ""
                     prompt_quantity     = ""
                     prompt_success      = "\nCategory added!"
