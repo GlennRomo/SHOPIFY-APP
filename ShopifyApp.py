@@ -217,8 +217,64 @@ class Payment:      ## How do I initialize this function without defining a syst
     #     self.current_user   = current_user
     #     self.total_price    = total_price
     
-    def payment_choice_logic(self, current_user, total_price):
-        x = 1
+    def payment_choice_logic(self, current_user, my_cart):
+        
+        tax_percentage = 0.12
+        
+        cart_price = my_cart.cart_total_price(current_user)
+        tax_price = cart_price * tax_percentage
+        total_price = cart_price + tax_price
+        
+        print("\nYour total price is: \t$ {:.2f}".format(cart_price))
+        print("Your total tax is: \t\t$ {:.2f}".format(tax_price))
+        print("Your total price is: \t$ {:.2f}".format(total_price))
+        
+        while True:
+        
+            print("\nPlease choose the payment option:\n1. Net Banking\n2. PayPal\n3. Credit/Debit Card\n4. Google Pay\n5. Apple Pay\n6. Unified Payment Interface")
+            pay_option = input("\nPlease enter your choice: ")
+            
+            if pay_option == '1':
+                print("\n\nRedirecting to the portal for Net Banking to make a payment of ${:.2f}".format(total_price))
+                print("\nYour order is successfully placed!!")
+                my_cart.cart_list.clear()
+                break
+            
+            elif pay_option == '2':
+                print("\n\nRedirecting to the portal for PayPal to make a payment of ${:.2f}".format(total_price))
+                print("\nYour order is successfully placed!!")
+                my_cart.cart_list.clear()
+                break
+                
+            elif pay_option == '3':
+                print("\n\nRedirecting to the portal for Credit/Debit Cards to make a payment of ${:.2f}".format(total_price))
+                print("\nYour order is successfully placed!!")
+                my_cart.cart_list.clear()
+                break
+                
+            elif pay_option == '4':
+                print("\n\nRedirecting to the portal for Google Pay to make a payment of ${:.2f}".format(total_price))
+                print("\nYour order is successfully placed!!")
+                my_cart.cart_list.clear()
+                break
+                
+            elif pay_option == '5':
+                print("\n\nRedirecting to the portal for Apple Pay to make a payment of ${:.2f}".format(total_price))
+                print("\nYour order is successfully placed!!")
+                my_cart.cart_list.clear()
+                break
+                
+            elif pay_option == '6':
+                print("\n\nRedirecting to the portal for Unified Payment Interface to make a payment of ${:.2f}".format(total_price))
+                print("\nYour order is successfully placed!!")
+                my_cart.cart_list.clear()
+                break
+                
+            elif pay_option == 'x':
+                break
+            
+            else:
+                print("\nThat catalog ID already exists in the catalog. Please enter a valid catalog ID. Enter x to exit.")
     
         
 def display_users(users):
@@ -424,9 +480,6 @@ def main():
             # Add System Cart
             my_cart = Cart()
             
-            # Add System Tax Percentage
-            tax_percentage = 0.12
-            
             # Add System Payment
             payment_object = Payment()
             
@@ -527,62 +580,9 @@ def main():
                             print("\nFilter and View Product List by Category Option Coming Soon!")
                             
                         elif choice == '7':     ## Checkout Option
-                            cart_price = my_cart.cart_total_price(current_user)
-                            tax_price = cart_price * tax_percentage
-                            total_price = cart_price + tax_price
-                            
-                            print("\nYour total price is: \t$ {:.2f}".format(cart_price))
-                            print("Your total tax is: \t\t$ {:.2f}".format(tax_price))
-                            print("Your total price is: \t$ {:.2f}".format(total_price))
-                            
-                            payment_object.payment_choice_logic(current_user, total_price)
-                            
-                            while True:
-                            
-                                print("\nPlease choose the payment option:\n1. Net Banking\n2. PayPal\n3. Credit/Debit Card\n4. Google Pay\n5. Apple Pay\n6. Unified Payment Interface")
-                                pay_option = input("\nPlease enter your choice: ")
-                                
-                                if pay_option == '1':
-                                    print("\n\nRedirecting to the portal for Net Banking to make a payment of ${:.2f}".format(total_price))
-                                    print("\nYour order is successfully placed!!")
-                                    my_cart.cart_list.clear()
-                                    break
-                                
-                                elif pay_option == '2':
-                                    print("\n\nRedirecting to the portal for PayPal to make a payment of ${:.2f}".format(total_price))
-                                    print("\nYour order is successfully placed!!")
-                                    my_cart.cart_list.clear()
-                                    break
-                                    
-                                elif pay_option == '3':
-                                    print("\n\nRedirecting to the portal for Credit/Debit Cards to make a payment of ${:.2f}".format(total_price))
-                                    print("\nYour order is successfully placed!!")
-                                    my_cart.cart_list.clear()
-                                    break
-                                    
-                                elif pay_option == '4':
-                                    print("\n\nRedirecting to the portal for Google Pay to make a payment of ${:.2f}".format(total_price))
-                                    print("\nYour order is successfully placed!!")
-                                    my_cart.cart_list.clear()
-                                    break
-                                    
-                                elif pay_option == '5':
-                                    print("\n\nRedirecting to the portal for Apple Pay to make a payment of ${:.2f}".format(total_price))
-                                    print("\nYour order is successfully placed!!")
-                                    my_cart.cart_list.clear()
-                                    break
-                                    
-                                elif pay_option == '6':
-                                    print("\n\nRedirecting to the portal for Unified Payment Interface to make a payment of ${:.2f}".format(total_price))
-                                    print("\nYour order is successfully placed!!")
-                                    my_cart.cart_list.clear()
-                                    break
-                                    
-                                elif pay_option == 'x':
-                                    break
-                                
-                                else:
-                                    print("\nThat catalog ID already exists in the catalog. Please enter a valid catalog ID. Enter x to exit.")
+
+                                                        
+                            payment_object.payment_choice_logic(current_user, my_cart)
                                 
                             
                         elif choice == '8':
@@ -708,9 +708,10 @@ def main():
         
             print("\nThank You for Visiting the Demo Marketplace")
         
-        except Exception as e:
+        except Exception:   ## as e:
             
-            print("\n\n\nAn error occurred:", e)
+            # print("\n\n\nAn error occurred:", e)
+            print("")
         
         
 
