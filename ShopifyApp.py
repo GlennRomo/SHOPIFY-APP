@@ -483,7 +483,8 @@ def main():
             
             # Add System Users    
             users = {
-                        "u"  : User("u", "u1@g.com", "1", my_user),  #user
+                        "u"  : User("u", "u1@g.com", "1", my_user),  #user 1
+                        "u2" : User("u2", "u2@g.com", "2", my_user), #user 2
                         "a"  : User("a","u2@g.com","1", my_admin)    #admin
                     }
             
