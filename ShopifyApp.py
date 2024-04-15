@@ -183,15 +183,15 @@ class Cart:
             print("\nERROR: Current user has no permissions to remove cart products")
         
         
-    def display_cart(self,current_user, my_cart, my_catalog):
+    def display_cart(self,current_user, session_cart, my_catalog):
         if 'View Cart' in current_user.user_type.rights:
-            if not my_cart.cart_list:
+            if not session_cart.cart_list:
                 print("\nCart is empty.")
             else:                
                 print("\nProduct Name\tCategory ID\tPrice\tQuantity\n")
 
-                for product_id, value in my_cart.cart_list.items():
-                    print(f"{my_catalog.product_list[product_id].product_name}\t\t\t{my_catalog.product_list[product_id].category_id}\t\t{my_catalog.product_list[product_id].price}\t\t{my_cart.cart_list[product_id].quantity}")
+                for product_id, value in session_cart.cart_list.items():
+                    print(f"{my_catalog.product_list[product_id].product_name}\t\t\t{my_catalog.product_list[product_id].category_id}\t\t{my_catalog.product_list[product_id].price}\t\t{session_cart.cart_list[product_id].quantity}")
         else:
             print("\nERROR: current user has no permissions to add products")
             
@@ -209,6 +209,39 @@ class Cart:
             print("\nERROR: current user has no permissions to add products")
             
         return total
+ 
+ 
+class Session:
+    def __init__(self, current_user, session_id):
+        self.session = Cart()
+        self.current_user = current_user
+        self.session_id = session_id
+
+    
+class SessionManager:
+    def __init__(self):
+        self.session_list = {}
+
+    def create_session(self, current_user, session_id):
+        self.session_list[session_id] = Session(current_user,session_id)
+
+    def get_session_cart(self, session_id):
+        return self.session_list.get(session_id)
+    
+    def get_user_sessions(self, current_user):
+        user_session_ids = []
+        print(self.session_list)
+        for session_id, session in self.session_list.items():
+            print('entered for loop')
+            if self.session_list[session_id].current_user == current_user:
+                user_session_ids.append(session_id)
+        return user_session_ids
+    
+    def has_sessions_for_user(self, current_user):
+        for session in self.session_list.values():
+            if session['user'] == current_user:
+                return True
+        return False
     
     
 class Payment:      ## How do I initialize this function without defining a system variable (the output kept saying "payment_logic() missing 1 required positional argument: 'total_price'")
@@ -217,11 +250,11 @@ class Payment:      ## How do I initialize this function without defining a syst
     #     self.current_user   = current_user
     #     self.total_price    = total_price
     
-    def payment_choice_logic(self, current_user, my_cart):
+    def payment_choice_logic(self, current_user, session_cart):
         
         tax_percentage = 0.12
         
-        cart_price = my_cart.cart_total_price(current_user)
+        cart_price = session_cart.cart_total_price(current_user)
         tax_price = cart_price * tax_percentage
         total_price = cart_price + tax_price
         
@@ -237,37 +270,37 @@ class Payment:      ## How do I initialize this function without defining a syst
             if pay_option == '1':
                 print("\n\nRedirecting to the portal for Net Banking to make a payment of ${:.2f}".format(total_price))
                 print("\nYour order is successfully placed!!")
-                my_cart.cart_list.clear()
+                session_cart.cart_list.clear()
                 break
             
             elif pay_option == '2':
                 print("\n\nRedirecting to the portal for PayPal to make a payment of ${:.2f}".format(total_price))
                 print("\nYour order is successfully placed!!")
-                my_cart.cart_list.clear()
+                session_cart.cart_list.clear()
                 break
                 
             elif pay_option == '3':
                 print("\n\nRedirecting to the portal for Credit/Debit Cards to make a payment of ${:.2f}".format(total_price))
                 print("\nYour order is successfully placed!!")
-                my_cart.cart_list.clear()
+                session_cart.cart_list.clear()
                 break
                 
             elif pay_option == '4':
                 print("\n\nRedirecting to the portal for Google Pay to make a payment of ${:.2f}".format(total_price))
                 print("\nYour order is successfully placed!!")
-                my_cart.cart_list.clear()
+                session_cart.cart_list.clear()
                 break
                 
             elif pay_option == '5':
                 print("\n\nRedirecting to the portal for Apple Pay to make a payment of ${:.2f}".format(total_price))
                 print("\nYour order is successfully placed!!")
-                my_cart.cart_list.clear()
+                session_cart.cart_list.clear()
                 break
                 
             elif pay_option == '6':
                 print("\n\nRedirecting to the portal for Unified Payment Interface to make a payment of ${:.2f}".format(total_price))
                 print("\nYour order is successfully placed!!")
-                my_cart.cart_list.clear()
+                session_cart.cart_list.clear()
                 break
                 
             elif pay_option == 'x':
@@ -290,7 +323,7 @@ def display_products(products):
         
         
         
-def repeat_choice_logic(current_user, my_catalog, my_cart, my_categories, prompt_exiting,prompt_action, prompt_id, prompt_name, prompt_categoryID, prompt_categoryname, prompt_price, prompt_quantity, prompt_success, prompt_another, option):     ## could improve prompt by using a list and use array index for reference
+def repeat_choice_logic(current_user, my_catalog, session_cart, my_categories, prompt_exiting,prompt_action, prompt_id, prompt_name, prompt_categoryID, prompt_categoryname, prompt_price, prompt_quantity, prompt_success, prompt_another, option):     ## could improve prompt by using a list and use array index for reference
 
     choice = 'y'
     
@@ -323,7 +356,7 @@ def repeat_choice_logic(current_user, my_catalog, my_cart, my_categories, prompt
                         if my_catalog.is_id_available(current_user, product_id):
                             quantity = input(prompt_quantity)       ## prompt_quantity = "\nHow many would you like to add to your cart: "
                             
-                            my_cart.add_cartproduct(current_user, product_id, quantity, my_catalog, my_categories)
+                            session_cart.add_cartproduct(current_user, product_id, quantity, my_catalog, my_categories)
                             
                             print(prompt_success)        ##prompt_success = "\nProduct added!"
                             
@@ -334,7 +367,7 @@ def repeat_choice_logic(current_user, my_catalog, my_cart, my_categories, prompt
                             
                     elif option == 'Delete Cart Product':
                         if my_catalog.is_id_available(current_user, product_id):
-                            if product_id not in my_cart.cart_list:
+                            if product_id not in session_cart.cart_list:
                                 print("\nThis product is not in your cart.")
                             else:
                                 while True:
@@ -348,7 +381,7 @@ def repeat_choice_logic(current_user, my_catalog, my_cart, my_categories, prompt
                                             quantity = input(prompt_quantity)                            
                                             quantity = int(quantity)
                                             
-                                        my_cart.remove_cartproduct(current_user, next_choice, product_id, quantity, my_catalog)
+                                        session_cart.remove_cartproduct(current_user, next_choice, product_id, quantity, my_catalog)
                                         
                                         print(prompt_success)
                                             
@@ -441,7 +474,7 @@ def main():
         try:
         
             #user rights
-            user_rights  = ["View Products", "View Cart", "Add Cart Product", "Remove Cart Product", "Checkout"]
+            user_rights  = ["View Products", "View Cart", "Add Cart Product", "Remove Cart Product", "Checkout", "Create Session", "Change Session"]
             admin_rights = ["Add New Product", "View Products", "Modify Products", "Delete Product", "Add Category", "Modify Category", "Delete Category", "Create User", "Display Users", "Delete User"]
             
             # User_types
@@ -477,11 +510,16 @@ def main():
             my_catalog.add_product(users['a'], "6", "TV", "5", 50, my_categories)
             my_catalog.add_product(users['a'], "7", "Bread", "7", 50, my_categories)
             
-            # Add System Cart
-            my_cart = Cart()
-            
             # Add System Payment
             payment_object = Payment()
+            
+            # Add System Session Manager
+            session_manager = SessionManager()
+            
+            session_manager.create_session(users['u'], 'default')
+            
+            # Set initial session_cart
+            session_cart = session_manager.session_list['default']
             
             logged_in = False
             
@@ -505,10 +543,15 @@ def main():
                                 print("Invalid username. Please try again.")
                                 retry += 1
                             else:
-                                print("\nWelcome back, ",username,"!")
-                                current_user = users[username]
-                                logged_in = True
-                                break
+                                password = input("Enter password: ")
+                                
+                                if password == users[username].password:
+                                    print("\nWelcome back, ",username,"!")
+                                    current_user = users[username]
+                                    logged_in = True
+                                    break
+                                else:
+                                    print("\nIncorrect Password. Please try again...")
                         else:
                             print("5 invalid choices made, returning to main menu.")
                             logged_in = False
@@ -522,76 +565,98 @@ def main():
                          
                 else:   #This else statement enters after a user logs in
                 
-                    # This section of code is to understand how to get the current user type for option permissions
-                    #print(u_type)
-                    #User_type.display_rights(current_user)
-                    
-                    # Option menu appears based on user type of current login
+                    # This section shows menu options based on current user type
         
                     if current_user.user_type.type_name == 'user':
                         
-                        print("\nUser Options:")
-                        print("1. View Cart Contents\n2. Add Items to Your Cart\n3. Remove Items from Your Cart\n4. View Product List\n5. View Product Category List\n6. Filter and View Product List by Category\n7. Checkout\n8. Logout")
-                        choice = input("\nEnter your choice: ")
-                    
-                        if choice == '1':       ## View Cart Contents Option 
+                        if session_cart.current_user == current_user:
+                       
+                            print("\nUser Options:")
+                            print("1.  View Current Session\n2.  Create New Session\n3.  Change Session\n4.  Delete Session\n5.  View Open Sessions\n6.  View Cart Contents\n7.  Add Items to Your Cart\n8.  Remove Items frm Your Cart\n9.  View Product List\n10.  View Category List\n11. Filter and View Product List by Category\n12. Checkout\n13. Logout")
+                            choice = input("\nEnter your choice: ")
                         
-                            my_cart.display_cart(current_user, my_cart, my_catalog)
-                            
-                        elif choice == '2':    ## Add Items to Your Cart Option
+                            if choice == '1':     ## View Current Session
+                                print("The current session name is: ",session_cart.session_id)
                         
-                            prompt_exiting      = "\nExiting addition to cart..."
-                            prompt_action       = "\nLet's add some products to your cart:"
-                            prompt_id           = "\nEnter the product id: "
-                            prompt_name         = ""
-                            prompt_categoryID   = ""
-                            prompt_categoryname = ""
-                            prompt_price        = ""
-                            prompt_quantity     = "\nHow many would you like to add to your cart: "
-                            prompt_success      = "\nProduct added!"
-                            prompt_another      = "\nWould you like to add another product to the cart? y/n"
-                            option              = "Add Cart Product"
-                        
-                            repeat_choice_logic(current_user, my_catalog, my_cart, my_categories, prompt_exiting, prompt_action, prompt_id, prompt_name, prompt_categoryID, prompt_categoryname, prompt_price, prompt_quantity, prompt_success, prompt_another, option)
-                                                        
-                        elif choice == '3':    ## Remove Items from Your Cart Option
-                            
-                            prompt_exiting      = "\nExiting removal from cart..."
-                            prompt_action       = "\nLet's delete some products from your cart:"
-                            prompt_id           = "\nEnter the product id: "
-                            prompt_name         = "\nWould you like to remove all items with this product id or just some?\n[1 - 'remove all'  2 - 'remove some']\nEnter your choice:  "
-                            prompt_categoryID   = ""
-                            prompt_categoryname = ""
-                            prompt_price        = ""
-                            prompt_quantity     = "\nHow many would you like to remove: "
-                            prompt_success      = "\nProduct(s) deleted!"
-                            prompt_another      = "\nWould you like to remove another product from your cart? y/n"
-                            option              = "Delete Cart Product"
-                        
-                            repeat_choice_logic(current_user, my_catalog, my_cart, my_categories, prompt_exiting, prompt_action, prompt_id, prompt_name, prompt_categoryID, prompt_categoryname, prompt_price, prompt_quantity, prompt_success, prompt_another, option)
-        
-                        elif choice == '4':    ## View Product Catalog Option 
-                            my_catalog.display_product(current_user, my_catalog)
-                            
-                        elif choice == '5':
-                            print("\nView Product Category List Option Coming Soon!")
-                            
-                        elif choice == '6':
-                            print("\nFilter and View Product List by Category Option Coming Soon!")
-                            
-                        elif choice == '7':     ## Checkout Option
-
-                                                        
-                            payment_object.payment_choice_logic(current_user, my_cart)
+                            elif choice == '2':   ## Create New Session
+                                new_session_name = input("\nEnter the name of the new session: ")
+                                session_manager.create_session(current_user, new_session_name)
                                 
+                            elif choice == '3':    ## Change Session Option
+                                print("\nChange Session Option Coming Soon!")
+                                
+                            elif choice == '4':    ## Delete Session Option
+                                print("\nDelete Session Option Coming Soon!")
+                                
+                            elif choice == '5':    ## View User Sessions Option
+                                user_session_ids = session_manager.get_user_sessions(current_user)
+                                
+                                print("Current list of open user sessions: \n",user_session_ids)
+                                
+                            elif choice == '6':    ## View Cart Contents Option
+                                session_cart.display_cart(current_user, session_cart, my_catalog)
+                                
+                            elif choice == '7':    ## Add Items to Your Cart Option
                             
-                        elif choice == '8':
-                            print("logged out.")
-                            logged_in = False
+                                prompt_exiting      = "\nExiting addition to cart..."
+                                prompt_action       = "\nLet's add some products to your cart:"
+                                prompt_id           = "\nEnter the product id: "
+                                prompt_name         = ""
+                                prompt_categoryID   = ""
+                                prompt_categoryname = ""
+                                prompt_price        = ""
+                                prompt_quantity     = "\nHow many would you like to add to your cart: "
+                                prompt_success      = "\nProduct added!"
+                                prompt_another      = "\nWould you like to add another product to the cart? y/n"
+                                option              = "Add Cart Product"
+                            
+                                repeat_choice_logic(current_user, my_catalog, session_cart, my_categories, prompt_exiting, prompt_action, prompt_id, prompt_name, prompt_categoryID, prompt_categoryname, prompt_price, prompt_quantity, prompt_success, prompt_another, option)
+                                                            
+                            elif choice == '8':    ## Remove Items from Your Cart Option
+                                
+                                prompt_exiting      = "\nExiting removal from cart..."
+                                prompt_action       = "\nLet's delete some products from your cart:"
+                                prompt_id           = "\nEnter the product id: "
+                                prompt_name         = "\nWould you like to remove all items with this product id or just some?\n[1 - 'remove all'  2 - 'remove some']\nEnter your choice:  "
+                                prompt_categoryID   = ""
+                                prompt_categoryname = ""
+                                prompt_price        = ""
+                                prompt_quantity     = "\nHow many would you like to remove: "
+                                prompt_success      = "\nProduct(s) deleted!"
+                                prompt_another      = "\nWould you like to remove another product from your cart? y/n"
+                                option              = "Delete Cart Product"
+                            
+                                repeat_choice_logic(current_user, my_catalog, session_cart, my_categories, prompt_exiting, prompt_action, prompt_id, prompt_name, prompt_categoryID, prompt_categoryname, prompt_price, prompt_quantity, prompt_success, prompt_another, option)
+            
+                            elif choice == '9':    ## View Product Option 
+                                my_catalog.display_product(current_user, my_catalog)
+                                
+                            elif choice == '10':    ## View Category List
+                                print("\nView Category List Option Coming Soon!")
+                                
+                            elif choice == '11':
+                                print("\nFilter and View Product List by Category Option Coming Soon!")
+                                
+                            elif choice == '12':     ## Checkout Option
+                                payment_object.payment_choice_logic(current_user, session_cart)
+                                    
+                            elif choice == '13':
+                                print("logged out.")
+                                logged_in = False
+                                
+                            else:
+                                print("Invalid choice. Please try again.")
                             
                         else:
-                            print("Invalid choice. Please try again.")
                             
+                            print("current session not owned by current user")
+                            
+                            if session_manager.has_sessions_for_user(current_user) == True:
+                                
+                                user_session_ids = session_manager.get_user_sessions(current_user)
+                                session_cart = session_manager.get_session_cart(current_user, user_session_ids[0])
+                            else:
+                                session_manager.create_session(current_user, 'default')
                     
                     # Begin options once Admin login is achieved
                     elif current_user.user_type.type_name == 'admin':
@@ -619,7 +684,7 @@ def main():
                             prompt_another      = "\nWould you like to add another product to the cart? y/n"
                             option              = "Add Catalog Product"
                         
-                            repeat_choice_logic(current_user, my_catalog, my_cart, my_categories, prompt_exiting, prompt_action, prompt_id, prompt_name, prompt_categoryID, prompt_categoryname, prompt_price, prompt_quantity, prompt_success, prompt_another, option)
+                            repeat_choice_logic(current_user, my_catalog, session_cart, my_categories, prompt_exiting, prompt_action, prompt_id, prompt_name, prompt_categoryID, prompt_categoryname, prompt_price, prompt_quantity, prompt_success, prompt_another, option)
                                    
                             
                         elif choice == '3':     ## Modify Existing Product Option
@@ -636,7 +701,7 @@ def main():
                             prompt_another      = "\nWould you like to modify another product from the catalog? y/n"
                             option              = "Modify Catalog Product"
                         
-                            repeat_choice_logic(current_user, my_catalog, my_cart, my_categories, prompt_exiting, prompt_action, prompt_id, prompt_name, prompt_categoryID, prompt_categoryname, prompt_price, prompt_quantity, prompt_success, prompt_another, option)
+                            repeat_choice_logic(current_user, my_catalog, session_cart, my_categories, prompt_exiting, prompt_action, prompt_id, prompt_name, prompt_categoryID, prompt_categoryname, prompt_price, prompt_quantity, prompt_success, prompt_another, option)
         
                             
                         elif choice == '4':     ## Delete Existing Product Option                                 
@@ -653,7 +718,7 @@ def main():
                             prompt_another      = "\nWould you like to remove another product from the catalog? y/n"
                             option              = "Delete Catalog Product"
                         
-                            repeat_choice_logic(current_user, my_catalog, my_cart, my_categories, prompt_exiting, prompt_action, prompt_id, prompt_name, prompt_categoryID, prompt_categoryname, prompt_price, prompt_quantity, prompt_success, prompt_another, option)
+                            repeat_choice_logic(current_user, my_catalog, session_cart, my_categories, prompt_exiting, prompt_action, prompt_id, prompt_name, prompt_categoryID, prompt_categoryname, prompt_price, prompt_quantity, prompt_success, prompt_another, option)
         
                             
                         elif choice == '5':     ## View Category Catalog Option
@@ -674,7 +739,7 @@ def main():
                             prompt_another      = "\nWould you like to add another category to the catalog? y/n"
                             option              = "Add Catalog Category"
                         
-                            repeat_choice_logic(current_user, my_catalog, my_cart, my_categories, prompt_exiting, prompt_action, prompt_id, prompt_name, prompt_categoryID, prompt_categoryname, prompt_price, prompt_quantity, prompt_success, prompt_another, option)
+                            repeat_choice_logic(current_user, my_catalog, session_cart, my_categories, prompt_exiting, prompt_action, prompt_id, prompt_name, prompt_categoryID, prompt_categoryname, prompt_price, prompt_quantity, prompt_success, prompt_another, option)
                             
                             
                         elif choice == '7':
