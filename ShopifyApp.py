@@ -152,6 +152,7 @@ class Cart:
     cart_list = {}
     
     def add_cartproduct(self, current_user, session_id, product_id, quantity, my_catalog, my_categories, session_manager):
+        print("6 Press enter to continue...")
         if 'Add Cart Product' in current_user.user_type.rights:
             #Logic to add product
             
@@ -159,7 +160,7 @@ class Cart:
                 print("\nThis product does not exists. Please identify an existing product.")
             else:
                 quantity = int(quantity)  ## Build in error if input is not a number
-                session_manager.session_list[current_user].session_cart.cart_list[product_id] = Cart_product(product_id, quantity, my_catalog, my_categories)                    
+                self.cart_list[current_user.username] = Cart_product(product_id, quantity, my_catalog, my_categories)                    
         else:
             print("\nERROR: Current user has no permissions to add products")
             
@@ -189,9 +190,11 @@ class Cart:
                 print("\nCart is empty.")
             else:                
                 print("\nProduct Name\tCategory ID\tPrice\tQuantity\n")
+                
+                product_identifier = session_manager.session_list[current_user].session_cart.cart_list[current_user].product_id
 
-                for product_id, value in session_manager.session_list[current_user].session_cart.cart_list.items():
-                    print(f"{my_catalog.product_list[product_id].product_name}\t\t\t{my_catalog.product_list[product_id].category_id}\t\t{my_catalog.product_list[product_id].price}\t\t{session_manager.session_list[current_user].session_cart.cart_list[product_id].quantity}")
+                for current_user, value in session_manager.session_list[current_user].session_cart.cart_list.items():
+                    print(f"{my_catalog.product_list[product_identifier].product_name}\t\t\t{my_catalog.product_list[product_identifier].category_id}\t\t{my_catalog.product_list[product_identifier].price}\t\t{session_manager.session_list[current_user].session_cart.cart_list[product_identifier].quantity}")
         else:
             print("\nERROR: current user has no permissions to add products")
             
@@ -211,11 +214,11 @@ class Cart:
         return total
  
  
-class Session:
-    def __init__(self, current_user, session_id):
-        self.session_cart = Cart()
-        self.current_user = current_user
-        self.session_id = session_id
+# class Session:
+#     def __init__(self, current_user, session_id):
+#         self.session_cart = Cart()
+#         self.current_user = current_user
+#         self.session_id = session_id
 
     
 class SessionManager:
@@ -223,7 +226,7 @@ class SessionManager:
         self.session_list = {}
 
     def create_session(self, current_user, session_id):
-        self.session_list[current_user] = Session(current_user, session_id)
+        self.session_list[current_user.username] = Cart()
 
     def get_session_cart(self, session_id):
         return self.session_list.get(session_id)
@@ -517,17 +520,20 @@ def main():
             # Add System Session Manager
             session_manager = SessionManager()
             
+            
+            
+            
             session_manager.create_session(users['u1'], users['u1'].username)
             session_manager.create_session(users['u2'], users['u2'].username)
             
             ## U1 and U2 Cart addition testing
-            session_manager.session_list[users['u1']].session_cart.add_cartproduct(users['u1'], users['u1'].username, '1', '1', my_catalog, my_categories, session_manager)
-            print(session_manager.session_list[users['u1']].session_cart)
-            print(session_manager.session_list[users['u1']].session_cart.cart_list.items())
+            session_manager.session_list[users['u1'].username].add_cartproduct(users['u1'], users['u1'].username, '1', '1', my_catalog, my_categories, session_manager)
+            print(session_manager.session_list[users['u1'].username])
+            print(session_manager.session_list[users['u1'].username].cart_list[users['u1'].username].product_id,session_manager.session_list[users['u1'].username].cart_list[users['u1'].username].quantity)
             
-            session_manager.session_list[users['u2']].session_cart.add_cartproduct(users['u2'], users['u2'].username, '2', '2', my_catalog, my_categories, session_manager)
-            print(session_manager.session_list[users['u2']].session_cart)
-            print(session_manager.session_list[users['u2']].session_cart.cart_list.items())
+            session_manager.session_list[users['u2'].username].add_cartproduct(users['u2'], users['u2'].username, '2', '2', my_catalog, my_categories, session_manager)
+            print(session_manager.session_list[users['u2'].username])
+            print(session_manager.session_list[users['u1'].username].cart_list[users['u2'].username].product_id,session_manager.session_list[users['u2'].username].cart_list[users['u1'].username].quantity)
             
             logged_in = False
             
