@@ -3,6 +3,9 @@ Shopify App - Foundations: Programming Refresher Assignment
 
 """
 
+import traceback
+from datetime import datetime
+
 class User_type:
     def __init__(self, type_name, rights):
         self.type_name = type_name
@@ -391,7 +394,8 @@ def repeat_choice_logic(users, current_user, my_catalog, session_manager, my_cat
                 
                 if product_id == 'x':
                     break
-                else:
+                
+                elif choice =='y':
                     
                     if option == 'Add Cart Product':
                         if my_catalog.is_id_available(current_user, product_id):
@@ -540,7 +544,8 @@ def repeat_choice_logic(users, current_user, my_catalog, session_manager, my_cat
                             
                     else:
                         print("No option set for logic condition.")
-                        
+                else:
+                    print("this option is set if not a y")
 
                         
         else:
@@ -557,11 +562,11 @@ def repeat_choice_logic(users, current_user, my_catalog, session_manager, my_cat
 
 def main():
     
+    first_pass = 0
+    
     while True:
     
         try:          
-            
-            first_pass = 0
             
             if first_pass == 0:
         
@@ -888,13 +893,16 @@ def main():
         
         
         
-        except Exception:   ## as e:
+        except Exception:
+            exception_info = traceback.format_exc()
+            print("\n",exception_info)
             
-            # print("\n\n\nAn error occurred:", e)
-            print("")
+            # Get the current date and time
+            current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         
-        
-        
+            with open("exception_log.txt", "a") as file:
+                file.write(f"\n\nDate and Time: {current_datetime}\n")
+                file.write(exception_info)
         
         
 
@@ -904,21 +912,25 @@ if __name__ == "__main__":
   
     
 """
-Functionality to add
+Functionality to add or Errors to Solve
+    - Inputs that convert to int() must have validation that a number was entered or the code will error out
+        - A non-answer for "How many would you like to add to your cart: " triggered an error and failed
     - Add Cart Product
         - Option ''Add Cart Product'' in repeat_choice_logic passes through incorrectly when asked if want to add another product: choice = 4 passed through to "Enter the product id: " (also: Input of "1" allowed the "add another product to the cart?" query to continue on to adding another product to the cart, find why)
         - If a product_ID already exists in the cart, the additional quantity addition should sum to the original cart quantity after a user prompt to confirm addition with total quantity desired
     - Remove Cart Product
         - Fix the logic in remove_cartproduct since it can go from 'You must select a number of products that are less than...' straight to 'Product deleted from cart!' even if nothing is deleted
-    - Do not require a password for Guest and delete the guest cart when logged out
+    -Code Efficiencies 
+        - Change the 'list' currently defined for user permissions to a set (that is not a truple)
+        - Eliminate redundancy logic to check if product ID exists in main() and user 'Add Cart Product' / admin 'Add product' options
+        - Reduce 'repeat_choice_logic' code lines by implementing OR statements and other logic improvements
+    - User Interface
+        - Display lists when adding, modifying, deleting from the lists to help with knowing what you have in order to make changes
+    - Modify product in admin login should be able to choose which attributes they want to edit (i.e. product_name, category_id, price) rather than change all
+    - [Might have solved?] Checking out with an empty cart pushes lots of errors likely due to the try catch. "An error occurred: local variable 'total' referenced before assignment"
+    
+Big Picture Items
     - Data validation for names, email addresses, etc.
     - Modularize for more efficient code
-    - Change the 'list' currently defined for user permissions to a set (that is not a truple)
-    - Define a new class for switch statements that includes methods for user and admin option menus
-    - Eliminate redundancy logic to check if product ID exists in main() and user 'Add Cart Product' / admin 'Add product' options
-    - Reduce 'repeat_choice_logic' code lines by implementing OR statements and other logic improvements
-    - Inputs that convert to int() must have validation that a number was entered or the code will error out
-    - Modify product in admin login should be able to choose which attributes they want to edit (i.e. product_name, category_id, price) rather than change all
-    - Checking out with an empty cart pushes lots of errors likely due to the try catch. "An error occurred: local variable 'total' referenced before assignment"
-    - Display lists when adding, modifying, deleting from the lists to help with knowing what you have in order to make changes
+    - Define a new class for switch statements that includes methods for user and admin option menus (actually solved by controllers which is beyond this course or my current level)
 """
