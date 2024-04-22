@@ -29,3 +29,25 @@ Traceback (most recent call last):
   File "c:\users\ggavi\onedrive - dnv\caltech postgrad\shopifyapp\shopifyapp.py", line 207, in add_cartproduct
     quantity = int(quantity)  ## Build in error if input is not a number
 ValueError: invalid literal for int() with base 10: ''
+
+
+Date and Time: 2024-04-20 08:11:31
+Traceback (most recent call last):
+  File "c:\users\ggavi\onedrive - dnv\caltech postgrad\shopifyapp\shopifyapp.py", line 699, in main
+    repeat_choice_logic(users, current_user, my_catalog, session_manager, my_categories, prompt_exiting, prompt_action, prompt_id, prompt_name, prompt_categoryID, prompt_categoryname, prompt_price, prompt_quantity, prompt_success, prompt_another, option)
+  File "c:\users\ggavi\onedrive - dnv\caltech postgrad\shopifyapp\shopifyapp.py", line 404, in repeat_choice_logic
+    session_manager.session_list[current_user].add_cartproduct(current_user, product_id, quantity, my_catalog, my_categories, session_manager)
+  File "c:\users\ggavi\onedrive - dnv\caltech postgrad\shopifyapp\shopifyapp.py", line 207, in add_cartproduct
+    quantity = int(quantity)  ## Build in error if input is not a number
+ValueError: invalid literal for int() with base 10: ''
+
+
+Date and Time: 2024-04-20 08:24:18
+Traceback (most recent call last):
+  File "c:\users\ggavi\onedrive - dnv\caltech postgrad\shopifyapp\shopifyapp.py", line 699, in main
+    repeat_choice_logic(users, current_user, my_catalog, session_manager, my_categories, prompt_exiting, prompt_action, prompt_id, prompt_name, prompt_categoryID, prompt_categoryname, prompt_price, prompt_quantity, prompt_success, prompt_another, option)
+  File "c:\users\ggavi\onedrive - dnv\caltech postgrad\shopifyapp\shopifyapp.py", line 404, in repeat_choice_logic
+    session_manager.session_list[current_user].add_cartproduct(current_user, product_id, quantity, my_catalog, my_categories, session_manager)
+  File "c:\users\ggavi\onedrive - dnv\caltech postgrad\shopifyapp\shopifyapp.py", line 207, in add_cartproduct
+    quantity = int(quantity)  ## Build in error if input is not a number
+ValueError: invalid literal for int() with base 10: ''

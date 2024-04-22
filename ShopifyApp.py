@@ -6,7 +6,9 @@ Shopify App - Foundations: Programming Refresher Assignment
 import traceback
 from datetime import datetime
 
-class User_type:
+## Classes for user, category, catalog, cart, session, and payment
+
+class User_type:    ## This class object is designed for holding the specific user type and rights that provides security for users vs. admins
     def __init__(self, type_name, rights):
         self.type_name = type_name
         self.rights = rights
@@ -16,7 +18,7 @@ class User_type:
         print("\nList of User Rights: ", self.rights)
         
 
-class User:
+class User:         ## This class object contains user personal and identifiable information. Users are currently defined in main and a display user method is defined in this class.
     def __init__(self, username, email, password, user_type):
         self.username = username
         self.email = email
@@ -32,13 +34,13 @@ class User:
         print("The current user type rights are: ", self.user_type.rights)
         
       
-class Category:
+class Category:     ## This class contains specific category information
     def __init__(self, category_id, category_name):
         self.category_id = category_id
         self.category_name = category_name
         
         
-class Category_catalog:
+class Category_catalog:     ## This class contains the category list of specific categories. Adding, removing, modifying, displaying, and identifying categories methods are defined in this class. 
     category_list = {}
     
     def add_category(self, current_user, category_id, category_name):
@@ -113,7 +115,7 @@ class Category_catalog:
             print("\nERROR: Current user has no permissions to check products")
 
     
-class Product:
+class Product:      ## This class object are products and their specific information
     def __init__(self, product_id, product_name, category_id, price, my_categories):
         self.product_id = product_id
         self.product_name = product_name
@@ -122,7 +124,7 @@ class Product:
         self.price = price
         
         
-class Catalog:
+class Catalog:      ## This class objec tis the product catalog that is commprised of all products. Methods include adding, removing, modifying, displaying, and identifying products in the catalog
     product_list = {}
     
     def add_product(self, current_user, product_id, product_name, category_id, price, my_categories):
@@ -183,7 +185,7 @@ class Catalog:
             print("\nERROR: Current user has no permissions to check products")
 
 
-class Cart_product:
+class Cart_product:     ## This class object are the cart products and their specific information which are defined by products and categories from previous classes. Methods incluce total price of cart products
     def __init__(self, product_id, quantity, my_catalog, my_categories):
         self.product_id = product_id
         self.quantity   = quantity
@@ -193,7 +195,7 @@ class Cart_product:
     def total_price(self):
         return self.quantity * self.price
 
-class Cart:
+class Cart:             ## This class object is the cart list which is a list of cart products. Methods include adding, removing, displaying, and totaling cart total cost
     def __init__(self):
         self.cart_list = dict()
     
@@ -264,7 +266,7 @@ class Cart:
 #         self.session_id = session_id
 
     
-class SessionManager:
+class SessionManager:       ## This class object is a list of open cart sessions based on users and guests. Admins do not have carts so therefore do not have cart sessions
     def __init__(self):
         self.session_list = {}
 
@@ -288,7 +290,7 @@ class SessionManager:
         return False
     
     
-class Payment:      ## How do I initialize this function without defining a system variable (the output kept saying "payment_logic() missing 1 required positional argument: 'total_price'")
+class Payment:      ## This class object is the payment system for cart checkout. Methods contained here are logic flows for choosing a payment method and calculating cart total cost
     
     # def __init__(self, current_user, total_price):
     #     self.current_user   = current_user
@@ -354,27 +356,27 @@ class Payment:      ## How do I initialize this function without defining a syst
                 print("\nThat catalog ID already exists in the catalog. Please enter a valid catalog ID. Enter x to exit.")
     
         
-def display_users(users):
+def display_users(users):   ## Method to display users in the user class
     print("\nList of Users:")
     for user in users:
         print(user)
         
         
-def display_products(products):
+def display_products(products):     ## Methtod to display products in the catalog
     print("\nList of Products:")
     for product in products:
         print(product)
         
         
         
-def repeat_choice_logic(users, current_user, my_catalog, session_manager, my_categories, prompt_exiting,prompt_action, prompt_id, prompt_name, prompt_categoryID, prompt_categoryname, prompt_price, prompt_quantity, prompt_success, prompt_another, option):     ## could improve prompt by using a list and use array index for reference
+def repeat_choice_logic(users, current_user, my_catalog, session_manager, my_categories, prompt_exiting,prompt_action, prompt_id, prompt_name, prompt_categoryID, prompt_categoryname, prompt_price, prompt_quantity, prompt_success, prompt_another, option, choice):     ## could improve prompt by using a list and use array index for reference
+        ## This method contains the choice logic flow for choosing if the user would like to add/remove/modify another product or if the user would like to return to the previous menu for other actions    
+        ### Prompts are defined in main() to provide organization to the choice logic. Based on the different types of choices the user can make, the prompts are different. However, the flow of prompts are the same so the same attributes are used.
 
-    choice = 'y'
-    
     while True: 
         
         if choice == 'n':
-            print(prompt_exiting)               ## prompt_exiting = "\nExiting addition to cart..."
+            print(prompt_exiting)               
             break
         
         elif choice == 'x':
@@ -383,19 +385,20 @@ def repeat_choice_logic(users, current_user, my_catalog, session_manager, my_cat
             
         elif choice == 'y':
             
-            print(prompt_action)                ## prompt_action = "\nLet's add some products to your cart:"
+            print(prompt_action)                
             
             while True:
                 
                 if choice =='n':
                     break
                 
-                product_id = input(prompt_id)   ## prompt_id = "\nEnter the product id: "
+                product_id = input(prompt_id)   ## For example: prompt_id = "\nEnter the product id: "
                 
                 if product_id == 'x':
                     break
                 
-                elif choice =='y':
+                if choice =='y':    ## Here begins the options for different actions listed in an if-else step cascade. For example, it includes procedures for adding cart products or removing categories.
+                                    ### Class methods are the most common actions in this section while the main goal is to collect the necessary information from the user to perform actions.
                     
                     if option == 'Add Cart Product':
                         if my_catalog.is_id_available(current_user, product_id):
@@ -544,10 +547,8 @@ def repeat_choice_logic(users, current_user, my_catalog, session_manager, my_cat
                             
                     else:
                         print("No option set for logic condition.")
-                else:
-                    print("this option is set if not a y")
 
-                        
+                      
         else:
             print("Invalid choice. Please try again.")
         
@@ -562,15 +563,15 @@ def repeat_choice_logic(users, current_user, my_catalog, session_manager, my_cat
 
 def main():
     
-    first_pass = 0
+    first_pass = 0    ## Defines entering main() as the first time so databases created will not have errors when trying to add existing items
     
     while True:
     
-        try:          
+        try:          ## A try-catch is implemented here to allow the program to keep running if an error occurs. Try-catches would ultimately surround user inputs as well to have localized "reinitializing", but currently only happens for the whole program.
             
             if first_pass == 0:
         
-                #user rights
+                # User rights
                 user_rights  = ["View Products", "View Cart", "Add Cart Product", "Remove Cart Product", "View Categories", "Checkout", "Create Session", "Change Session"]
                 admin_rights = ["Add New Product", "View Products", "Modify Products", "Delete Product", "Add Category", "Delete Category", "View Categories", "Modify Category", "Delete Category", "Create User", "Display Users", "Delete User"]
                 
@@ -585,9 +586,7 @@ def main():
                             "u2"    : User("u2", "u2@g.com", "2", my_user), #user 2
                             "a"     : User("a","u2@g.com","3", my_admin)    #admin
                         }
-                
-                
-                
+                          
                 # Add System Session Manager
                 session_manager = SessionManager()
                 session_manager.create_session(users['u1'])
@@ -616,10 +615,10 @@ def main():
                 my_catalog.add_product(users['a'], "6", "Laptop", "5", 50, my_categories)
                 my_catalog.add_product(users['a'], "7", "Bread", "7", 50, my_categories)
                 
-                # Add System Payment
+                # Add System Payment System
                 payment_object = Payment()
                 
-                first_pass+=1
+                first_pass+=1   ## Only perform these actions if it is the first time entering the systsem
             
             logged_in = False
             
@@ -671,7 +670,7 @@ def main():
                          
                 else:   #This else statement enters after a user logs in
                 
-                    # This section shows menu options based on current user type
+                    # This section shows menu options based on current user type (user vs. admin).
         
                     if current_user.user_type.type_name == 'user':
                    
@@ -696,7 +695,7 @@ def main():
                             prompt_another      = "\nWould you like to add another product to the cart? y/n"
                             option              = "Add Cart Product"
                         
-                            repeat_choice_logic(users, current_user, my_catalog, session_manager, my_categories, prompt_exiting, prompt_action, prompt_id, prompt_name, prompt_categoryID, prompt_categoryname, prompt_price, prompt_quantity, prompt_success, prompt_another, option)
+                            repeat_choice_logic(users, current_user, my_catalog, session_manager, my_categories, prompt_exiting, prompt_action, prompt_id, prompt_name, prompt_categoryID, prompt_categoryname, prompt_price, prompt_quantity, prompt_success, prompt_another, option, choice = 'y')
                                                         
                         elif choice == '3':    ## Remove Items from Your Cart Option
                             
@@ -712,7 +711,7 @@ def main():
                             prompt_another      = "\nWould you like to remove another product from your cart? y/n"
                             option              = "Delete Cart Product"
                         
-                            repeat_choice_logic(users, current_user, my_catalog, session_manager, my_categories, prompt_exiting, prompt_action, prompt_id, prompt_name, prompt_categoryID, prompt_categoryname, prompt_price, prompt_quantity, prompt_success, prompt_another, option)
+                            repeat_choice_logic(users, current_user, my_catalog, session_manager, my_categories, prompt_exiting, prompt_action, prompt_id, prompt_name, prompt_categoryID, prompt_categoryname, prompt_price, prompt_quantity, prompt_success, prompt_another, option, choice = 'y')
         
                         elif choice == '4':    ## View Product Option 
                             my_catalog.display_product(current_user, my_catalog)
@@ -772,7 +771,7 @@ def main():
                             prompt_another      = "\nWould you like to add another product to the cart? y/n"
                             option              = "Add Catalog Product"
                         
-                            repeat_choice_logic(users, current_user, my_catalog, session_manager, my_categories, prompt_exiting, prompt_action, prompt_id, prompt_name, prompt_categoryID, prompt_categoryname, prompt_price, prompt_quantity, prompt_success, prompt_another, option)
+                            repeat_choice_logic(users, current_user, my_catalog, session_manager, my_categories, prompt_exiting, prompt_action, prompt_id, prompt_name, prompt_categoryID, prompt_categoryname, prompt_price, prompt_quantity, prompt_success, prompt_another, option, choice = 'y')
                                    
                             
                         elif choice == '3':     ## Modify Existing Product Option
@@ -789,7 +788,7 @@ def main():
                             prompt_another      = "\nWould you like to modify another product from the catalog? y/n"
                             option              = "Modify Catalog Product"
                         
-                            repeat_choice_logic(users, current_user, my_catalog, session_manager, my_categories, prompt_exiting, prompt_action, prompt_id, prompt_name, prompt_categoryID, prompt_categoryname, prompt_price, prompt_quantity, prompt_success, prompt_another, option)
+                            repeat_choice_logic(users, current_user, my_catalog, session_manager, my_categories, prompt_exiting, prompt_action, prompt_id, prompt_name, prompt_categoryID, prompt_categoryname, prompt_price, prompt_quantity, prompt_success, prompt_another, option, choice = 'y')
         
                             
                         elif choice == '4':     ## Delete Existing Product Option                                 
@@ -806,7 +805,7 @@ def main():
                             prompt_another      = "\nWould you like to remove another product from the catalog? y/n"
                             option              = "Delete Catalog Product"
                         
-                            repeat_choice_logic(users, current_user, my_catalog, session_manager, my_categories, prompt_exiting, prompt_action, prompt_id, prompt_name, prompt_categoryID, prompt_categoryname, prompt_price, prompt_quantity, prompt_success, prompt_another, option)
+                            repeat_choice_logic(users, current_user, my_catalog, session_manager, my_categories, prompt_exiting, prompt_action, prompt_id, prompt_name, prompt_categoryID, prompt_categoryname, prompt_price, prompt_quantity, prompt_success, prompt_another, option, choice = 'y')
         
                             
                         elif choice == '5':     ## View Category Catalog Option
@@ -827,7 +826,7 @@ def main():
                             prompt_another      = "\nWould you like to add another category to the catalog? y/n"
                             option              = "Add Category"
                         
-                            repeat_choice_logic(users, current_user, my_catalog, session_manager, my_categories, prompt_exiting, prompt_action, prompt_id, prompt_name, prompt_categoryID, prompt_categoryname, prompt_price, prompt_quantity, prompt_success, prompt_another, option)
+                            repeat_choice_logic(users, current_user, my_catalog, session_manager, my_categories, prompt_exiting, prompt_action, prompt_id, prompt_name, prompt_categoryID, prompt_categoryname, prompt_price, prompt_quantity, prompt_success, prompt_another, option, choice = 'y')
                             
                             
                         elif choice == '7':     ## Modify Existing Category Option
@@ -844,7 +843,7 @@ def main():
                             prompt_another      = "\nWould you like to modify another category in the catalog? y/n"
                             option              = "Modify Category"
                         
-                            repeat_choice_logic(users, current_user, my_catalog, session_manager, my_categories, prompt_exiting, prompt_action, prompt_id, prompt_name, prompt_categoryID, prompt_categoryname, prompt_price, prompt_quantity, prompt_success, prompt_another, option)
+                            repeat_choice_logic(users, current_user, my_catalog, session_manager, my_categories, prompt_exiting, prompt_action, prompt_id, prompt_name, prompt_categoryID, prompt_categoryname, prompt_price, prompt_quantity, prompt_success, prompt_another, option, choice = 'y')
                             
                             
                         elif choice == '8':     ## Delete Category Option
@@ -861,7 +860,7 @@ def main():
                             prompt_another      = "\nWould you like to delete another category in the catalog? y/n"
                             option              = "Delete Category"
                         
-                            repeat_choice_logic(users, current_user, my_catalog, session_manager, my_categories, prompt_exiting, prompt_action, prompt_id, prompt_name, prompt_categoryID, prompt_categoryname, prompt_price, prompt_quantity, prompt_success, prompt_another, option)
+                            repeat_choice_logic(users, current_user, my_catalog, session_manager, my_categories, prompt_exiting, prompt_action, prompt_id, prompt_name, prompt_categoryID, prompt_categoryname, prompt_price, prompt_quantity, prompt_success, prompt_another, option, choice = 'y')
                             
                             
                         elif choice == '9':     ## View User List Option         
@@ -891,11 +890,9 @@ def main():
             break
         
         
-        
-        
-        except Exception:
+        except Exception:       ## A list of errors is exported for support ticket creation
             exception_info = traceback.format_exc()
-            print("\n",exception_info)
+            print("ERROR!\n")
             
             # Get the current date and time
             current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -903,8 +900,7 @@ def main():
             with open("exception_log.txt", "a") as file:
                 file.write(f"\n\nDate and Time: {current_datetime}\n")
                 file.write(exception_info)
-        
-        
+               
 
 if __name__ == "__main__":
     main()
@@ -933,4 +929,6 @@ Big Picture Items
     - Data validation for names, email addresses, etc.
     - Modularize for more efficient code
     - Define a new class for switch statements that includes methods for user and admin option menus (actually solved by controllers which is beyond this course or my current level)
+    - Payment Class
+        - How do I initialize this function without defining a system variable (the output kept saying "payment_logic() missing 1 required positional argument: 'total_price'")
 """
