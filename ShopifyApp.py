@@ -83,19 +83,14 @@ class Category_catalog:     ## This class contains the category list of specific
             #Logic to delete product
             if category_id not in self.category_list:
                 print("\nThis category does not exist. Please identify an existing category.")
-            else:
-                input("Press enter to continue...")
-                
+            else:                
                 for user, user_value in users.items():
                     print(user, users[user].user_type.type_name)
-                    input("Press enter to continue0...")
                     if users[user].user_type.type_name == 'user':
                         cart_list_copy = session_manager.session_list[users[user]].cart_list.copy()
                         for product_id, cart_value in cart_list_copy.items():
-                            print(product_id, cart_value.category, self.category_list[category_id].category_name)
                             input("Press enter to continue1...")
                             if cart_value.category == self.category_list[category_id].category_name:
-                                input("Press enter to continue2...")
                                 del session_manager.session_list[users[user]].cart_list[product_id]
                             
                             
